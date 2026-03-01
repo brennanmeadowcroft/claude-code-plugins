@@ -1,10 +1,12 @@
 # claude-plugins
 
 ## Installation
-### Add the repository
+
+### 1. Add the marketplace
+
 **Claude Code**
 ```
-/plugin marketplace add bmeadowcroft/claude-plugins
+/plugin marketplace add brennanmeadowcroft/claude-plugins
 ```
 
 **Claude Desktop**
@@ -14,27 +16,38 @@
 4. Click the "Personal" tab
 5. Click the "+"
 6. Choose add from Github
-7. add `bmeadowcroft/claude-plugins` to the repo
+7. Add `brennanmeadowcroft/claude-plugins` as the repo
 
-The repository can also be added directly via configuration.  In `~/.claude/settings.json`, add:
-```
+**Manual configuration**
+
+You can also add the marketplace directly in `~/.claude/settings.json`:
+```json
 {
   "extraKnownMarketplaces": {
-    "research-toolkit": {
-      "source": { "source: "github", "repo": "brennanmeadowcroft/claude-plugins", "ref": "v1.0.0" }
+    "bmeadowcroft-plugins": {
+      "source": { "source": "github", "repo": "brennanmeadowcroft/claude-plugins" }
     }
   }
 }
 ```
 
-### Plugin installation
+### 2. Install a plugin
+
 **Claude Code**
 ```
-/plugin install <plugin name>
+/plugin install <plugin-name>@bmeadowcroft-plugins
+```
+
+For example:
+```
+/plugin install research-toolkit@bmeadowcroft-plugins
 ```
 
 ## Plugins
-| Plugin                                           | Tool        | Description                                                                         |
-| ------------------------------------------------ | ----------- | ----------------------------------------------------------------------------------- |
-| [research-toolkit](research-toolkit/README.md)   | Claude Code | Conducts research according to an objective, saving results for follow-up questions |
-| [development-tools](development-tools/README.md) | Claude Code | Provides useful skills and agents to support the development workflow               |
+
+| Plugin | Description |
+| --- | --- |
+| [research-toolkit](research-toolkit/README.md) | Web and Youtube research agents with vector store integration |
+| [development-tools](development-workflow/README.md) | Skills and agents to support the development workflow |
+| [security-tools](security-tools/README.md) | Security review agents and dependency scanning for vulnerability detection |
+| [vue-tools](vue-tools/) | Vue.js architecture guidance, component design patterns, and best practices |

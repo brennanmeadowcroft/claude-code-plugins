@@ -1,0 +1,6 @@
+{
+  "name": "security-tools",
+  "description": "Security review agents and dependency scanning for vulnerability detection",
+  "version": "1.0.0",
+  "author": { "name": "Brennan" }
+}

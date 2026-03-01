@@ -1,0 +1,31 @@
+{
+  "name": "bmeadowcroft-plugins",
+  "owner": {
+    "name": "Brennan"
+  },
+  "metadata": {
+    "description": "A collection of Claude Code plugins for research, development, security, and Vue.js architecture"
+  },
+  "plugins": [
+    {
+      "name": "research-toolkit",
+      "source": "./research-toolkit",
+      "description": "Web and Youtube research agents with vector store integration"
+    },
+    {
+      "name": "development-tools",
+      "source": "./development-workflow",
+      "description": "Tooling to help with development tasks, such as code generation, debugging, and testing."
+    },
+    {
+      "name": "security-tools",
+      "source": "./security-tools",
+      "description": "Security review agents and dependency scanning for vulnerability detection"
+    },
+    {
+      "name": "vue-tools",
+      "source": "./vue-tools",
+      "description": "Vue.js architecture guidance, component design patterns, and best practices"
+    }
+  ]
+}
