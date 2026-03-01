@@ -1,0 +1,6 @@
+{
+  "name": "development-tools",
+  "description": "Tooling to help with development tasks, such as code generation, debugging, and testing.",
+  "version": "1.0.0",
+  "author": { "name": "Brennan" }
+}

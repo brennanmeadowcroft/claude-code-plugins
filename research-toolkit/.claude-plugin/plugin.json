@@ -1,0 +1,6 @@
+{
+  "name": "research-toolkit",
+  "description": "Web and Youtube research agents with vector store integration",
+  "version": "1.0.0",
+  "author": { "name": "Brennan" }
+}
