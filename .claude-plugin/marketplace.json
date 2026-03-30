@@ -31,6 +31,11 @@
       "name": "orientation-tools",
       "source": "./orientation-tools",
       "description": "Codebase orientation skills for mapping structure, interactive exploration, task-driven learning, and health analysis before large changes"
+    },
+    {
+      "name": "day-manager",
+      "source": "./day-manager",
+      "description": "Personal productivity assistant for daily and weekly planning using Todoist, Google Calendar, and Obsidian"
     }
   ]
 }
