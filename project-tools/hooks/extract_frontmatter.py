@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Extract frontmatter from all 01-Projects/*/PLAN.md files relative to cwd.
-Outputs {"reason": "<formatted project index>"} to stdout for Claude hook injection.
+Outputs {"additionalContext": "<formatted project index>"} to stdout for Claude hook injection.
 """
 
 import json
@@ -47,13 +47,13 @@ def main():
     projects_dir = Path("01-Projects")
 
     if not projects_dir.exists():
-        print(json.dumps({"reason": "No 01-Projects/ folder found in current directory."}))
+        print(json.dumps({"additionalContext": "No 01-Projects/ folder found in current directory."}))
         sys.exit(0)
 
     plan_files = sorted(projects_dir.glob("*/PLAN.md"))
 
     if not plan_files:
-        print(json.dumps({"reason": "01-Projects/ exists but contains no PLAN.md files."}))
+        print(json.dumps({"additionalContext": "01-Projects/ exists but contains no PLAN.md files."}))
         sys.exit(0)
 
     today = date.today()
@@ -82,7 +82,7 @@ def main():
         if description:
             lines.append(f"  {description}")
 
-    print(json.dumps({"reason": "\n".join(lines)}))
+    print(json.dumps({"additionalContext": "\n".join(lines)}))
 
 
 if __name__ == "__main__":
