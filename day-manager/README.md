@@ -1,11 +1,12 @@
 # Day Manager
 
-Personal productivity assistant for daily and weekly planning. Three skills that work together to help you start your day with clarity, close it out intentionally, and reflect meaningfully at the end of each week.
+Personal productivity assistant for daily and weekly planning. Four skills that work together to help you open the week with intention, start each day with clarity, close it out intentionally, and reflect meaningfully at the end of each week.
 
 **Skills:**
-- `/start-day` — Morning briefing: calendar, priorities, and today's meeting notes
-- `/finish-day` — End-of-day: review, transcript reminder, reschedule, prep tomorrow's notes
-- `/wrap-week` — Weekly narrative recap saved to Obsidian
+- `/start-week` — Weekly planning: set 2–3 priorities, review projects for deadlines, create the weekly planning file
+- `/start-day` — Morning briefing: calendar, priority emails, weekly priorities, tasks, and today's meeting notes
+- `/finish-day` — End-of-day: review, priority email triage, transcript reminder, reschedule, prep tomorrow's notes
+- `/wrap-week` — Weekly narrative recap saved to Obsidian (fills in the file `/start-week` created)
 
 ---
 
@@ -13,9 +14,10 @@ Personal productivity assistant for daily and weekly planning. Three skills that
 
 The skills form a virtuous cycle:
 
-1. **`/finish-day`** preps tomorrow's meeting notes by appending a date-stamped section to each recurring meeting note in Obsidian.
-2. **`/start-day`** the next morning finds those sections by searching Obsidian for today's date string — no tags or manual setup needed.
-3. **`/wrap-week`** reads the daily notes built up through the week to synthesize a narrative recap.
+1. **`/start-week`** (Monday morning) sets the week's 2–3 priorities, reviews projects for upcoming deadlines, and creates a weekly planning file.
+2. **`/start-day`** each morning reads the weekly priorities, pulls Gmail p1/p2 emails, and synthesizes a briefing grounded in the week's goals.
+3. **`/finish-day`** each evening reviews priority emails that still need action, recaps the day, reschedules tasks, and preps tomorrow's meeting notes.
+4. **`/wrap-week`** (Friday afternoon) fills in the retrospective sections of the weekly file `/start-week` created.
 
 Run `/finish-day` each evening and `/start-day` each morning for best results. After 2–3 weeks, `/wrap-week` becomes significantly richer.
 
@@ -23,7 +25,7 @@ Run `/finish-day` each evening and `/start-day` each morning for best results. A
 
 ## Prerequisites
 
-All three skills require three MCP servers. Set them up once and they persist in your Claude Code user config.
+All four skills require MCP servers for calendar, tasks, email, and vault access. Set them up once and they persist in your Claude Code user config.
 
 ### 1. Todoist (Official Hosted MCP)
 
@@ -54,7 +56,22 @@ claude mcp add --transport stdio \
 
 The first time Claude Code uses this server it will open a browser for OAuth consent.
 
-### 3. Obsidian (mcpvault — filesystem direct)
+### 3. Gmail
+
+`/start-day` and `/finish-day` check for unread emails labeled `Priority/p1` or `Priority/p2`. Any Gmail MCP server that supports label-based search works. One option using the community `@gptscript-ai/gmail-mcp` server:
+
+```bash
+claude mcp add --transport stdio \
+  --env GOOGLE_OAUTH_CREDENTIALS=$HOME/gcp-oauth.keys.json \
+  gmail --scope user \
+  -- npx -y @gptscript-ai/gmail-mcp
+```
+
+Set up `Priority/p1` and `Priority/p2` labels in Gmail and apply them to emails that need your attention. The skills search for `label:Priority/p1 OR label:Priority/p2 is:unread` — adjust the query format to match your MCP server's API.
+
+If Gmail MCP is unavailable, both skills degrade gracefully and note that email data was skipped.
+
+### 4. Obsidian (mcpvault — filesystem direct)
 
 No Obsidian plugins required. Works even when Obsidian is closed.
 
@@ -156,11 +173,15 @@ Then pass the server name to finish-day:
 
 | Skill | Description | When to use |
 |---|---|---|
-| `/start-day` | Morning briefing with calendar, tasks, and meeting note links | Each morning before starting work |
-| `/finish-day` | Day close-out: review, reschedule, transcript reminder, tomorrow prep | Each evening before logging off |
-| `/wrap-week` | Mon–Sun narrative recap saved to Obsidian | Friday afternoon or Sunday evening |
+| `/start-week` | Set 2–3 weekly priorities, review projects for deadlines, create weekly planning file | Monday morning |
+| `/start-day` | Morning briefing with priority emails, weekly priorities, calendar, tasks, and meeting notes | Each morning before starting work |
+| `/finish-day` | Day close-out: priority email triage, review, reschedule, transcript reminder, tomorrow prep | Each evening before logging off |
+| `/wrap-week` | Mon–Sun narrative recap saved to Obsidian, fills in the weekly planning file | Friday afternoon or Sunday evening |
 
 ### Arguments
+
+**`/start-week`**
+- `--weekly-recaps-path <path>` — Override weekly recaps folder (default: `02-AreasOfResponsibility/Weekly Recaps`)
 
 **`/start-day`**
 - `--daily-notes-path <path>` — Override default daily notes folder (default: `Daily Notes`)
