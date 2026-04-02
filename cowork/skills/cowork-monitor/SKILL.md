@@ -117,7 +117,14 @@ For each completed agent dispatch, handle the result based on `type`:
 
 **`type: "research"`**
 - Determine the output file path: `{output-path}/{slug}.md` where slug is a kebab-case version of the task content (e.g., "Research MCP adoption" → `research-mcp-adoption.md`)
-- Write the `body` content to that file using the Write tool. Create parent directories if needed.
+- Build the Todoist task URL: `https://app.todoist.com/app/task/{kebab-case-task-content}-{task.id}` (e.g., task "Research MCP adoption" with id `abc123` → `https://app.todoist.com/app/task/research-mcp-adoption-abc123`)
+- Prepend a task link header to the body before writing:
+  ```
+  > [View in Todoist](https://app.todoist.com/app/task/{slug}-{task.id})
+
+  {body}
+  ```
+- Write the combined content to that file using the Write tool. Create parent directories if needed.
 - Call `add_task_comment` with: `Result saved to: {relative-vault-path}\n\n{summary}`
 - Call `complete_task`
 
