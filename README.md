@@ -43,6 +43,22 @@ For example:
 /plugin install research-toolkit@bmeadowcroft-plugins
 ```
 
+## Local development
+
+To test a plugin without pushing to GitHub, add your local clone as a marketplace:
+
+```
+/plugin marketplace add /path/to/claude-plugins
+```
+
+Then install from it:
+
+```
+/plugin install <plugin-name>@bmeadowcroft-plugins
+```
+
+The marketplace name `bmeadowcroft-plugins` comes from the `name` field in `.claude-plugin/marketplace.json`. Changes to skill and agent files are picked up on the next session — no reinstall needed.
+
 ## Plugins
 
 | Plugin                                              | Description                                                                 |
