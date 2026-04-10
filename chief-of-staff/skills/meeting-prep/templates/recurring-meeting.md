@@ -1,7 +1,7 @@
 ---
 Type: 1:1
-MeetingDate: <DATE>
-tags: []
+MeetingDate: <MEETING DATE>
+tags: [<optional_project_name>]
 ---
 
 ## <YYYY-MM-DD DATE>

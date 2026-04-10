@@ -37,7 +37,7 @@ Your goal is to build a mental model of the project that's strong enough to draf
 **Always start with the big picture (2-3 questions):**
 
 - What are you trying to accomplish? What does success look like?
-- Who is this for / who are the key stakeholders?
+- Who is this for / who are the key collaborators you will work with?
 - Are there any hard deadlines or external constraints on timing?
 
 **Then adapt based on what you hear.** A straightforward project (e.g., "plan a team offsite") might only need a couple more questions. A complex initiative (e.g., "launch a new product line across three markets") warrants deeper exploration.
@@ -159,7 +159,9 @@ Once the user is happy with the plan structure, save it as a polished markdown d
 - The document should visually reflect the progressive detail: early phases are concrete, later phases are intentionally open
 - Keep it scannable — someone should be able to glance at the plan and understand the shape of the work
 
-Save the file with a descriptive name like `project-plan-[short-project-name].md` to the outputs folder.
+Save the file with a descriptive name like `PLAN.md` to the outputs folder. Follow the template in "./templates/owned-project.md"
+
+**Generating the project tag:** Derive the `tags` value from the project folder name by converting it to snake_case lowercase (e.g. "2026 Operational Reporting" → `2026_operational_reporting`, "Q3 GTM Launch" → `q3_gtm_launch`). Replace spaces and hyphens with underscores and lowercase everything. Set this as the single tag in the frontmatter: `tags: [project_tag_here]`. This tag is used by project-monitor and meeting-prep to link related notes back to this project.
 
 After saving, let the user know the plan is ready. This is a living document — they should expect to come back and flesh out later phases as they learn more. Offer to help refine the plan as the project progresses.
 

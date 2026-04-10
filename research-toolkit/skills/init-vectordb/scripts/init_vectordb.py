@@ -9,14 +9,13 @@ import os
 
 
 def find_project_root():
-    """Walk up from this script to find the directory containing .claude/."""
-    d = os.path.dirname(os.path.abspath(__file__))
+    """Walk up from CWD to find the directory containing .claude/."""
+    d = os.getcwd()
     while d != os.path.dirname(d):
         if os.path.isdir(os.path.join(d, ".claude")):
             return d
         d = os.path.dirname(d)
-    # Fallback: assume 4 levels up from scripts/init_vectordb.py
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    return os.getcwd()
 
 
 def check_python():

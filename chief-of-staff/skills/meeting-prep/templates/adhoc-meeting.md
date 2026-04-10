@@ -1,7 +1,7 @@
 ---
-MeetingDate: <DATE>
+MeetingDate: <MEETING_DATE>
 Type: Meeting
-tags: [<project name>]
+tags: [<PROJECT_TAG>]
 ---
 
 ## Preamble

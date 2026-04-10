@@ -56,6 +56,7 @@ label:Priority/p1 OR label:Priority/p2
 (Adjust the exact tool name to match your Gmail MCP server.) For each email capture: subject, sender, date received, and any visible snippet or body. If unavailable, skip and note it.
 
 **Slack — today's activity:** Call the Slack MCP server to retrieve messages from today. Fetch in this order:
+
 1. **Direct messages** — conversations you sent or received today
 2. **Mentions** — any messages where you were @-mentioned in any channel
 3. **Active channels** — messages you posted in today
@@ -112,9 +113,9 @@ Present a brief, honest review:
 
 Summarize today's Slack conversations to help jog memory. Group by type:
 
-- *Decisions made* — threads or DMs where a clear decision or direction was agreed upon
-- *Commitments given* — things you said you'd do, or that someone said they'd do for you
-- *Notable conversations* — anything substantive that doesn't fit the above
+- _Decisions made_ — threads or DMs where a clear decision or direction was agreed upon
+- _Commitments given_ — things you said you'd do, or that someone said they'd do for you
+- _Notable conversations_ — anything substantive that doesn't fit the above
 
 Keep each entry to one line. If a Slack item looks like it should become a Todoist task (a commitment with no follow-up captured yet), flag it: "This looks like an uncaptured action item — add to inbox?"
 
@@ -190,44 +191,7 @@ This is what enables `/start-day` to find relevant meeting notes via date-string
 
 1. Call `list-events` for TOMORROW to get tomorrow's calendar events.
 
-2. For each calendar event:
-
-   **a. Determine if it's recurring or ad-hoc.**
-
-   Check in order:
-   1. **Calendar recurrence** — if the `list-events` response includes a recurrence rule or marks the event as recurring, it's recurring.
-   2. **Existing note file** — use Glob to search `02-AreasOfResponsibility/Notes/` for a file matching the pattern `<meeting name>*.md` or `<person name>*.md` (e.g., `1:1 with Alex - 2026.md`). A year-suffixed filename is a strong signal of a recurring note.
-   3. **Ask the user** — if neither signal is available: "Is '[Meeting Name]' a recurring meeting or a one-off?"
-
-   **b. For recurring meetings with an existing note:**
-   - Read the last date-stamped section of the note file to extract context (prior agenda items, open action items in the "Carried Forward" section).
-   - Look for associated project docs in `01-Projects/`: use Glob to find folders whose name relates to the meeting topic, then read the `PLAN.md` inside. Surface any open action items or upcoming milestones that are relevant to this meeting. If nothing obvious matches, ask the user: "Are there any projects under `01-Projects/` I should pull context from for '[Meeting Name]'?"
-   - Append a new section to the end of the file using Template A's date section stub, pre-populating the Agenda with any carried-forward items or relevant project context:
-
-   ```markdown
-   ## TOMORROW
-
-   ### Agenda
-
-   [Carried-forward items or open project tasks, if any]
-
-   ### Notes
-
-   ### Action Items
-
-   - [ ]
-
-   ### Carried Forward
-   ```
-
-   Replace `TOMORROW` with the actual date string (e.g., `## 2026-03-31`).
-
-   **c. For ad-hoc meetings or recurring meetings without an existing note:**
-   - If no note exists, ask the user: "I don't see a note for '[Meeting Name]'. Want me to create one?"
-   - Also look for related project docs in `01-Projects/` and ask: "I found `01-Projects/[Project Name]/PLAN.md` — should I pull context from it?" If nothing matches, ask: "Are there any projects under `01-Projects/` I should pull context from?"
-   - If the user confirms creation, use the Write tool to create `02-AreasOfResponsibility/Notes/<Meeting Name>.md` using:
-     - **Template A** (Recurring) if it's a recurring meeting, with the first date section pre-populated
-     - **Template B** (Ad-hoc) if it's a one-off, with DATE filled in as TOMORROW
+2. For each calendar event, use the /meeting-prep skill to prep the notes. Provide the meeting name and the meeting date.
 
    **d. All meetings get a note.** If a meeting has no note and the user declines to create one, note it explicitly: "Skipped note for '[Meeting Name]' — you'll need to create it manually if needed."
 

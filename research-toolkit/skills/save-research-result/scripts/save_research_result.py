@@ -159,12 +159,12 @@ def fix_db_permissions(db_path):
 
 
 def find_project_root():
-    d = os.path.dirname(os.path.abspath(__file__))
+    d = os.getcwd()
     while d != os.path.dirname(d):
         if os.path.isdir(os.path.join(d, ".claude")):
             return d
         d = os.path.dirname(d)
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    return os.getcwd()
 
 
 def save_to_vectordb(record):

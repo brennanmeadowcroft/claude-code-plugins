@@ -27,7 +27,29 @@ It's also possible to install this within a codebase or repo so it's always avai
 ```
 
 ## Bootstrapping
-After installing, run `/init_vectordb` to set up the vector database within the project. This creates a `.research-memory/` folder that contains the local vector database. The first research request will also check if installed and notify if it's not set up.
+The vector store is initialized automatically on your first prompt after installing the plugin (via a `UserPromptSubmit` hook). It also performs a health check on every subsequent session start — if something is wrong, you'll see an error before any work begins.
+
+You can also initialize manually with `/init-vectordb`, which is useful if the store gets corrupted and needs a full rebuild.
+
+The store is created as a `.research-memory/` folder next to the `.claude/` directory in your project root.
+
+## Cloud Sync (Nextcloud, Dropbox, iCloud, etc.)
+
+**Do not sync `.research-memory/` with a cloud storage service.**
+
+The vector store uses ChromaDB, which stores data as SQLite databases and binary HNSW index files. These are not safe to sync:
+
+- **Corruption risk**: Nextcloud (or similar) can read a partially-written file mid-write, producing a silently corrupted database that still appears to open but returns wrong results or errors later
+- **Binary conflicts are unrecoverable**: If two devices both modify the store and a "conflicted copy" is created, there is no merge — you just lose data
+- **The store is intentionally device-local**: Research results are stored per-device. Re-run `/init-vectordb` (or just open Claude Code) on each machine to initialize a fresh store
+
+**If your project lives inside a synced folder, exclude `.research-memory` from sync:**
+
+- **Nextcloud**: Settings → Ignored Files → add `.research-memory`
+- **Dropbox**: Add `.research-memory` to your [ignored paths](https://help.dropbox.com/sync/ignored-files)
+- **iCloud Drive**: Prefix with a `.nosync` extension or move the store outside the iCloud folder (not supported natively — consider keeping your project outside iCloud)
+
+The `.gitignore` entry for `.research-memory/` is added automatically on init.
 
 ## Usage
 ### Research

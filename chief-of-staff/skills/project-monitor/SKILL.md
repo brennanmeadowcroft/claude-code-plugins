@@ -37,7 +37,11 @@ If no projects are found, note that and skip to closing.
 
 ---
 
-## Phase 2: Load Todoist State (run in parallel)
+## Phase 2: Load Todoist State and Linked Notes (run in parallel)
+
+For each project, derive its tag from the folder name using the same snake_case rule as project-planner: lowercase, spaces and hyphens replaced with underscores (e.g. `01-Projects/2026 Operational Reporting/` → `2026_operational_reporting`). Store this as the project tag.
+
+Search for Obsidian meeting notes linked to this project by scanning `02-AreasOfResponsibility/Notes/` for files whose YAML frontmatter contains the project tag. These are meeting notes that were tagged during meeting-prep and represent work discussed or decided in the context of this project.
 
 For each project, fetch tasks from the matching Todoist project (match by `name` from frontmatter — use the project name as the Todoist project filter):
 
