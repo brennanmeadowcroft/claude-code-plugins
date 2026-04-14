@@ -144,36 +144,16 @@ A p1 task finished, a project milestone hit, or a day that ran particularly long
 
 ---
 
-## Phase 5: Transcript Reminder
+## Phase 5: Process Transcripts
 
-ALWAYS present this step. Never skip it.
+Run the `/process-transcripts` skill for today's meetings. Today's calendar events were already fetched in Phase 1 — pass that context so the skill does not need to re-fetch the calendar.
 
----
+The skill will:
+- Check `~/Nextcloud/Meeting Uploads/TODAY/` for transcript files matching today's meetings
+- Generate structured summaries and write them into the appropriate Obsidian notes
+- Create Todoist tasks in #Inbox for any action items
 
-**Transcript Upload**
-
-If you recorded any meetings or conversations today, now is the time to download and save them to your n8n pickup folder.
-
-```
-[ ] Downloaded all transcripts from your recording tool
-[ ] Saved to n8n pickup folder
-```
-
-If `--transcript-mcp <server-name>` was passed and that MCP server is available:
-
-> I see the `<server-name>` MCP server is configured. Would you like me to trigger transcript processing now? Tell me which tool to call and I'll run it. Then call whatever tool the user specifies.
-
-If no transcript MCP is configured:
-
-> To automate this in the future, expose your n8n webhook as an MCP server and pass `--transcript-mcp <server-name>` to this skill.
-
----
-
-Options:
-
-1. **Done** — transcripts are handled
-2. **Skip** — no transcripts today
-3. **Remind me later** — note it in the daily note
+After the skill completes (or if the user skips), continue to Phase 6.
 
 ## Phase 6: Reschedule Incomplete Tasks
 
