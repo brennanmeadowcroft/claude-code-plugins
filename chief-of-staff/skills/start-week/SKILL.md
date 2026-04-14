@@ -152,6 +152,36 @@ Tell the user: "Created `02-AreasOfResponsibility/Weekly Recaps/WEEK_NUM.md` —
 
 ---
 
+## Phase 5: Suggest Focus Time Blocks
+
+Before closing the session, propose dedicated focus blocks that align with the user's top priorities.
+
+1. **Identify calendar gaps:** Look at this week's calendar (already fetched in Phase 1) and identify gaps of 60+ minutes where no meetings are scheduled. These are candidate focus windows.
+
+2. **Gather priority context:** Review the confirmed weekly priorities from Phase 3 and surface any relevant Todoist tasks that support them. If the `find-tasks` results from Phase 1 lack sufficient detail, call `find-tasks` again with a filter for tasks due this week.
+
+3. **Propose 2–4 focus blocks:** Map suggestions to the user's top priorities. Each suggestion should include:
+   - Day and time window (e.g., "Tuesday 9:00–11:00")
+   - The priority/project it supports
+   - A proposed calendar event title in the format: `[IT] {Project Name}` (e.g., `[IT] Platform Migration`)
+
+4. **Read preferences:** Before suggesting blocks, check if `~/.claude-personal/context/preferences-and-constraints.md` exists. If it does, read the `## Calendar Conventions` section to understand the user's preferences for managing calendar time (e.g., preferred deep-work hours, times to avoid). Use this to make suggestions more relevant.
+
+5. **Present suggestions:** Offer the user a choice:
+   > "Based on your priorities and calendar gaps, here are some suggested focus blocks:
+   > - Tuesday 9:00–11:00 → `[IT] Platform Migration`
+   > - Wednesday 2:00–4:00 → `[IT] Hiring Pipeline`
+   > Want me to block any of these? They'll be marked as Free so they don't block meeting scheduling."
+
+6. **Create approved blocks:** For any blocks the user approves, create them on Google Calendar using the Google Calendar MCP (`create-event`). Set them as:
+   - Title: `[IT] {Project Name}`
+   - Status: Free (so they show as available for scheduling)
+   - No attendees
+
+7. **Confirm completion:** After creating the blocks, tell the user which ones were created.
+
+---
+
 ## Quality Notes
 
 - The goal of Phase 3 is focus, not completeness. 2–3 real priorities beat a 10-item list.

@@ -81,6 +81,8 @@ Show the 2–3 priorities set in `/start-week` for this week. This gives daily c
 **Calendar**
 List events chronologically with start and end times. Flag any day with more than 4 hours of back-to-back meetings. Note if a meeting note was found for any event (e.g., `→ [[1:1 with Alex]]`).
 
+Events with titles starting with `[IT]` are intentional focus time blocks, not meetings. In the calendar listing, label them as "Focus: [rest of title]" and note that they are schedulable if an important meeting needs to be placed there.
+
 **Top Priorities**
 Synthesize Todoist p1 and p2 tasks into a ranked list of 3–5 focus areas. Where relevant, note alignment with the weekly priorities above. Briefly explain the ranking (e.g., "p1, overdue 2 days"). Keep it scannable.
 
@@ -89,6 +91,8 @@ List overdue tasks grouped by how long they've been overdue. Flag anything overd
 
 **Suggested Focus Blocks** (only if there are clear calendar gaps)
 Based on gaps between events, suggest 1–3 windows for deep work. Example: "9:00–11:00 — clear before standup, good for [top priority]."
+
+If the user already has `[IT]` focus blocks scheduled, reference them here rather than suggesting new ones. Only suggest new windows if gaps exist beyond the scheduled focus blocks.
 
 **Today's Meeting Notes**
 If meeting notes were found for today, list the note title and any relevant content from the today section.

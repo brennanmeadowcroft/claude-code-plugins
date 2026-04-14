@@ -50,6 +50,8 @@ Run all of the following in parallel:
 
 **This week's calendar:** `list-events` for WEEK_START through TODAY. Group by day. Note total meeting hours and any recurring commitments.
 
+Events with titles starting with `[IT]` are intentional focus blocks, not meetings. When counting meetings or summarizing calendar load, exclude `[IT]` events from the meeting count but include them in a separate "Focus time scheduled" tally.
+
 **Next week's calendar:** `list-events` for NEXT_WEEK_START through NEXT_WEEK_END. Note meeting load, any heavy days, and commitments that need prep.
 
 **Daily notes:** Read each `02-AreasOfResponsibility/Daily Notes/YYYY-MM-DD.md` for Mon–Fri this week. For each note that exists, extract: accomplishments, blockers, recurring themes, any project mentions, and end-of-day reflections. Note how many days have notes vs. don't.
@@ -157,6 +159,8 @@ After priorities are set, briefly review:
 - **Calendar load:** Flag any days with >4 hours of back-to-back meetings
 - **Key meetings to prep for:** Any next-week calendar events needing prep based on the project/AOR context
 - **Known constraints:** Travel, blocked time, dependencies
+
+Check if `/start-week` has already been run for next week (i.e., does `NEXT_WEEK_NUM.md` already have `[IT]` blocks?). If not, remind the user that `/start-week` can schedule focus blocks for next week.
 
 Ask: "Any intention or theme you want to carry into next week?" Capture their answer for the planning file.
 
