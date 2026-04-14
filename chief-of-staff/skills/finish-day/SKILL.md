@@ -45,6 +45,8 @@ Run in parallel:
 
 **Today's calendar:** Call `list-events` on the Google Calendar MCP server for today.
 
+Events with titles starting with `[IT]` are intentional focus time blocks scheduled by `/start-week`. When summarizing calendar activity in Phase 4, label them as focus blocks, not meetings.
+
 **Today's daily note:** Check for and read `02-AreasOfResponsibility/Daily Notes/TODAY.md` using the Read tool if it exists.
 
 **Gmail — priority emails:** Call the Gmail MCP server to search for unread emails with high-priority labels. Use the query:
@@ -79,7 +81,13 @@ For each email, one compact entry:
   [1–2 sentence summary]
   **Action needed:** [Concrete decision or task the user is responsible for]
 
-List p1 emails first. Ask: "Do any of these need a Todoist task created?" If yes, create them in `#Inbox` via `add-tasks` and confirm.
+List p1 emails first. Ask: "Do any of these need a Todoist task created?" If yes, for each email the user wants to convert:
+
+1. Create a 1–2 sentence task description explaining the intent (what the user needs to do and why, derived from the email content).
+2. Include a Gmail link in the task description using the format `https://mail.google.com/mail/u/0/#inbox/MESSAGE_ID` where `MESSAGE_ID` is the email's message ID (request this from the Gmail MCP if available; if unavailable, note in the task that the email can be found by searching for the subject).
+3. Create the task in `#Inbox` via `add-tasks` with the description and link included.
+
+Confirm all created tasks.
 
 ---
 
@@ -109,6 +117,8 @@ Present a brief, honest review:
 - Completed Todoist tasks (with project)
 - Calendar events that happened today
 
+If any `[IT]` focus blocks were on today's calendar, note whether they were used productively (i.e., was related work completed?). This helps the user reflect on whether the focus blocking strategy is working.
+
 **Slack Activity** (only if Slack data was retrieved)
 
 Summarize today's Slack conversations to help jog memory. Group by type:
@@ -117,7 +127,13 @@ Summarize today's Slack conversations to help jog memory. Group by type:
 - _Commitments given_ — things you said you'd do, or that someone said they'd do for you
 - _Notable conversations_ — anything substantive that doesn't fit the above
 
-Keep each entry to one line. If a Slack item looks like it should become a Todoist task (a commitment with no follow-up captured yet), flag it: "This looks like an uncaptured action item — add to inbox?"
+Keep each entry to one line. Present all Slack items at once and ask: "Do any of these need a task created?" If yes, for each item the user wants to convert:
+
+1. Create a task in `#Inbox` via `add-tasks` with a 1–2 sentence description explaining the commitment or action item.
+2. Include the Slack message link in the task description. Request a permalink from the Slack MCP (format: the direct link to the message/thread), or if unavailable, note the channel and timestamp so the user can find it.
+3. Wait for the user's decision on each flagged item before proceeding to the next phase.
+
+Confirm all created tasks.
 
 **Still Open**
 
@@ -244,3 +260,5 @@ Ask before writing: "Any thoughts on today to capture in your notes?" Include th
 - The transcript reminder (Phase 3) must always be shown
 - Batch all Todoist updates — don't send them one at a time while the user is still deciding
 - When pulling context for recurring meetings, only surface items that are genuinely actionable — don't dump the entire note history
+- When creating tasks from emails or Slack threads, always include both a meaningful description (intent and context) and a navigable link back to the source — this ensures the user can revisit the original message without friction
+- Slack threads with open commitments should never be silently dropped — always surface them during the Slack Activity section and wait for explicit user input on whether each should become a task
