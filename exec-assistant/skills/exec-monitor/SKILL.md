@@ -63,13 +63,17 @@ If the update fails for a task, skip it and log a warning — do not dispatch an
 
 ---
 
-## Phase 3.5 — Resolve project names
+## Phase 3.5 — Resolve project names and output paths
 
-Call `find-projects` to get the full project list. Build a lookup map of `project_id → project_name`.
+Call `find-projects` to get the full project list. Build a lookup map of `project_id → project_name` and include the `parent_id` for each project.
 
-For each claimed task, look up the project name using the task's `project_id`. This is used to determine the output path for research results:
-- Path: `{notes-path}/01-Projects/{project-name}/Notes/`
-- If the task has no project or the project can't be found, use `{notes-path}/01-Projects/Claude Tasks/Notes/`
+For each claimed task, determine the output path for research results:
+- **If `project_id` is null** → AoR path: `{notes-path}/02-AreasOfResponsibility/Notes/`
+- **If the project has `parent_id === null` AND name is "Ongoing"** → AoR path: `{notes-path}/02-AreasOfResponsibility/Notes/`
+- **Otherwise** → Project path: `{notes-path}/01-Projects/{project-name}/Notes/`
+- **Fallback** (project not found): `{notes-path}/01-Projects/Claude Tasks/Notes/`
+
+Store the resolved output path with each task for use in Phase 4 and Phase 5.
 
 ---
 
@@ -113,7 +117,7 @@ For each completed agent dispatch, handle the result based on `type`:
 
 **`type: "update"`**
 - Call `add-comments` with the result summary
-- Call `complete-tasks`
+- Call `complete-tasks` with labels updated to add `claude-done` (remove `claude-doing`)
 
 **`type: "research"`**
 - Determine the output file path: `{output-path}/{slug}.md` where slug is a kebab-case version of the task content (e.g., "Research MCP adoption" → `research-mcp-adoption.md`)
@@ -126,17 +130,34 @@ For each completed agent dispatch, handle the result based on `type`:
   ```
 - Write the combined content to that file using the Write tool. Create parent directories if needed.
 - Call `add-comments` with: `Result saved to: {relative-vault-path}\n\n{summary}`
-- Call `complete-tasks`
+- Call `complete-tasks` with labels updated to add `claude-done` (remove `claude-doing`)
 
 **`type: "notification"`**
 - Fire desktop notification: `osascript -e 'display notification "{notification}" with title "Exec Assistant"'`
 - Call `add-comments` with the summary
-- Call `complete-tasks`
+- Call `complete-tasks` with labels updated to add `claude-done` (remove `claude-doing`)
 
 **On agent error / unexpected result**
 - Reset the task: call `update-tasks` to swap `claude-doing` back to `claude` in labels
 - Call `add-comments` with: `Agent failed. Task reset for retry. Error: {error-details}`
 - Fire desktop notification: `osascript -e 'display notification "Task failed and was reset: {task-content}" with title "Exec Monitor ⚠️"'`
+
+---
+
+## Phase 6.5 — Write AI Actions to daily note
+
+For all successfully completed tasks (all types: update, research, notification):
+
+1. Get today's date via bash: `date +%Y-%m-%d`
+2. Construct the daily note path: `{notes-path}/02-AreasOfResponsibility/Daily Notes/{YYYY-MM-DD}.md`
+3. Read the file if it exists. If it doesn't exist, start with an empty string.
+4. Check if the file contains a `## AI Actions` heading. If not, append it to the file content.
+5. For each completed task, append a bullet point in this format:
+   ```
+   - Completed "[task content]" — [brief result summary]. [View in Todoist](https://app.todoist.com/app/task/{slug}-{task.id})
+   ```
+   where `slug` is the kebab-case version of the task content and `task.id` is the task ID.
+6. Write the updated content back to the daily note file. Create parent directories if needed.
 
 ---
 
