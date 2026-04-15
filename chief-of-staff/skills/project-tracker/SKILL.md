@@ -88,4 +88,4 @@ Create parent directories as needed. Before saving, do a quick check that the fo
 
 ## Tone
 
-Keep everything concise. The Overview should be a short paragraph — 2-4 sentences, enough to set the scene without becoming a project brief. The user will be reading this during a meeting, so density and clarity matter more than polish.
+Keep everything concise. The Objective should be a short paragraph or bullets — 2-4 sentences, enough to set the scene without becoming a project brief. The user will be reading this during a meeting, so density and clarity matter more than polish.
