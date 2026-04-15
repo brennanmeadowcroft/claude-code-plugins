@@ -146,7 +146,7 @@ The chief of staff assumes a particular structure to the Obsidian vault based on
 
 ### CLAUDE.md Configuration
 
-Add a **Chief of Staff** section to your vault's `CLAUDE.md` to set defaults without passing arguments every time:
+Add a **Chief of Staff** section to your vault's `CLAUDE.md` to set persistent path defaults — no arguments needed on every invocation. All path-aware skills read this block on startup.
 
 ```markdown
 ## Chief of Staff
@@ -157,13 +157,24 @@ Add a **Chief of Staff** section to your vault's `CLAUDE.md` to set defaults wit
 - areas-path: Areas
 ```
 
-Any value set here acts as the default for all skills that use that path. Per-invocation arguments still override CLAUDE.md values.
+| Key | Default | Used by |
+|-----|---------|---------|
+| `projects-path` | `01-Projects` | `/new-project`, `/project-planner`, `/project-tracker`, `/project-index`, `/project-monitor`, `/meeting-prep` |
+| `daily-notes-path` | `02-AreasOfResponsibility/Daily Notes` | `/start-day`, `/finish-day`, `/wrap-week` |
+| `notes-path` | `02-AreasOfResponsibility/Notes` | `/start-day`, `/finish-day`, `/meeting-prep`, `/process-transcripts`, `/project-monitor` |
+| `weekly-recaps-path` | `02-AreasOfResponsibility/Weekly Recaps` | `/start-week`, `/start-day`, `/wrap-week` |
+| `areas-path` | `02-AreasOfResponsibility` | `/wrap-week`, `/aor-review` |
+
+Precedence: per-invocation argument > `CLAUDE.md` value > hardcoded default.
 
 ### Per-invocation Overrides
+
+Any skill argument takes highest precedence for that run:
 
 ```
 /start-day --daily-notes-path "Journal/Daily" --notes-path "Meetings"
 /wrap-week --weekly-recaps-path "Reviews/Weekly"
+/project-planner --projects-path "Projects"
 ```
 
 The skills assume this folder structure in your vault:
@@ -262,17 +273,28 @@ If connected with an MCP server, processing can be automatically triggered by pa
 - `--projects-path <path>` — Override projects root folder (default: `01-Projects`)
 - `--summary` — Run in silent summary mode (no interaction, structured output only — used by `/wrap-week`)
 
+**`/meeting-prep`**
+- `--notes-path <path>` — Override meeting notes folder (default: `02-AreasOfResponsibility/Notes`)
+- `--projects-path <path>` — Override projects folder (default: `01-Projects`)
+
+**`/process-transcripts`**
+- `--notes-path <path>` — Override meeting notes folder (default: `02-AreasOfResponsibility/Notes`)
+- `--date <YYYY-MM-DD>` — Process transcripts for a specific date (default: today)
+- `--meeting <name>` — Process only a single named meeting
+- `--note-file <path>` — Explicit path to the Obsidian meeting note (bypasses auto-detection)
+- `--transcript-file <path>` — Explicit path to the transcript file (bypasses auto-detection)
+
 **`/project-index`**
-- No arguments — reads from `01-Projects/*/PLAN.md` in the current working directory
+- `--projects-path <path>` — Override projects root folder (default: `01-Projects`)
 
 **`/new-project`**
 - `--projects-path <path>` — Override projects root folder. Precedence: this argument > `CLAUDE.md` config > default (`01-Projects`)
 
 **`/project-planner`**
-- No arguments — begins an interview to scope and structure the project
+- `--projects-path <path>` — Override projects root folder (default: `01-Projects`)
 
 **`/project-tracker`**
-- No arguments — begins a short intake to create a lightweight tracker
+- `--projects-path <path>` — Override projects root folder (default: `01-Projects`)
 
 ---
 

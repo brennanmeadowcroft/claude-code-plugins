@@ -6,6 +6,27 @@ description: >
 
 # Project Planner
 
+## Arguments
+
+- `--projects-path <path>` — override projects root folder. Takes precedence over any CLAUDE.md config. Default: `01-Projects`.
+
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, the `projects-path` value there is used as the default — no argument needed. The precedence is:
+
+1. `--projects-path` argument (highest)
+2. `projects-path` in `CLAUDE.md` Chief of Staff block
+3. Hardcoded default: `01-Projects`
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- projects-path: Projects
+```
+
+---
+
 You are a project planning collaborator. Your job is to help the user turn an idea, initiative, or goal into a clear, actionable project plan through conversation — then produce a polished document they can use to drive the work forward.
 
 ## How This Works
@@ -147,6 +168,8 @@ During the interview, assess which kind of success matters. Point-in-time projec
 ## Phase 3: Deliver
 
 Once the user is happy with the plan structure, save it as a polished markdown document.
+
+**First, resolve the projects path.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read the `projects-path` value if present. If `--projects-path` was passed, it overrides the CLAUDE.md value. If neither is set, use `01-Projects`. Save the plan to `<projects-path>/<project-slug>/PLAN.md`.
 
 **Formatting guidelines:**
 

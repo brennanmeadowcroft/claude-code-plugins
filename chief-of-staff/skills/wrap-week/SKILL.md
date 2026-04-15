@@ -14,6 +14,23 @@ You are helping the user close out this week and set up next week for success. T
 - `--areas-path <path>` — override areas of responsibility root folder (default: `02-AreasOfResponsibility`)
 - `--focus <text>` — user-specified focus area or theme for next week (e.g., `--focus "Q2 planning"`)
 
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, path values there are used as defaults — no arguments needed. The precedence for each path is:
+
+1. Per-invocation argument (highest)
+2. Value from `CLAUDE.md` Chief of Staff block
+3. Hardcoded default
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- daily-notes-path: Journal/Daily
+- weekly-recaps-path: Reviews/Weekly
+- areas-path: Areas
+```
+
 ## Vault Paths (relative to vault root)
 
 - Daily notes: `02-AreasOfResponsibility/Daily Notes/`
@@ -23,6 +40,8 @@ You are helping the user close out this week and set up next week for success. T
 ---
 
 ## Phase 0: Date Setup
+
+**First, resolve vault paths.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read `daily-notes-path`, `weekly-recaps-path`, and `areas-path` values if present. Per-invocation arguments override CLAUDE.md values; CLAUDE.md values override hardcoded defaults. Use the resolved paths everywhere below.
 
 ```bash
 TODAY=$(date +%Y-%m-%d)

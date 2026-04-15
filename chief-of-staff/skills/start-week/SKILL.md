@@ -7,15 +7,36 @@ description: Weekly planning session — reviews projects for due dates and open
 
 You are helping the user open the week with intention. Review what's on deck across projects and commitments, help them focus on 2–3 meaningful priorities (not a laundry list), and create the weekly planning file that `/wrap-week` will fill in on Friday.
 
+## Arguments
+
+- `--weekly-recaps-path <path>` — override weekly recaps folder (default: `02-AreasOfResponsibility/Weekly Recaps`)
+
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, the `weekly-recaps-path` value there is used as the default — no argument needed. The precedence is:
+
+1. `--weekly-recaps-path` argument (highest)
+2. `weekly-recaps-path` in `CLAUDE.md` Chief of Staff block
+3. Hardcoded default: `02-AreasOfResponsibility/Weekly Recaps`
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- weekly-recaps-path: Reviews/Weekly
+```
+
 ## Vault Paths (relative to vault root)
 
 - Projects: `01-Projects/` — each project has its own subfolder, typically containing a `PLAN.md`
-- Weekly recaps: `02-AreasOfResponsibility/Weekly Recaps/` (override with `--weekly-recaps-path`)
+- Weekly recaps: resolved `weekly-recaps-path` (default: `02-AreasOfResponsibility/Weekly Recaps/`)
 - Daily notes: `02-AreasOfResponsibility/Daily Notes/`
 
 ---
 
 ## Phase 0: Date Setup
+
+**First, resolve the weekly recaps path.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read the `weekly-recaps-path` value if present. If `--weekly-recaps-path` was passed, it overrides the CLAUDE.md value. If neither is set, use `02-AreasOfResponsibility/Weekly Recaps`. Use the resolved path everywhere below.
 
 Run via Bash:
 ```bash

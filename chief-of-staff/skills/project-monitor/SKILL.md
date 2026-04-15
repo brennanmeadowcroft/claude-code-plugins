@@ -15,17 +15,37 @@ This skill can run in two modes:
 ## Arguments
 
 - `--projects-path <path>` — override projects folder (default: `01-Projects`)
+- `--notes-path <path>` — override meeting notes folder (default: `02-AreasOfResponsibility/Notes`)
 - `--summary` — run in summary mode (no interaction, structured output only)
+
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, path values there are used as defaults — no arguments needed. The precedence for each path is:
+
+1. Per-invocation argument (highest)
+2. Value from `CLAUDE.md` Chief of Staff block
+3. Hardcoded default
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- projects-path: Projects
+- notes-path: Meetings
+```
 
 ## Vault Paths (relative to vault root)
 
-- Projects: `01-Projects/` (each project is a subfolder with a `PLAN.md` file)
+- Projects: resolved `projects-path` (default: `01-Projects/`) — each project is a subfolder with a `PLAN.md` file
+- Meeting notes: resolved `notes-path` (default: `02-AreasOfResponsibility/Notes/`)
 
 ---
 
 ## Phase 1: Load Projects
 
-Read all `01-Projects/*/PLAN.md` files. From each, extract frontmatter:
+**First, resolve vault paths.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read `projects-path` and `notes-path` values if present. Per-invocation arguments override CLAUDE.md values; CLAUDE.md values override hardcoded defaults. Use the resolved paths everywhere below.
+
+Read all `<projects-path>/*/PLAN.md` files. From each, extract frontmatter:
 - `name` — project name
 - `description` — keyword-rich summary
 - `due_date` — deadline (optional)
@@ -41,7 +61,7 @@ If no projects are found, note that and skip to closing.
 
 For each project, derive its tag from the folder name using the same snake_case rule as project-planner: lowercase, spaces and hyphens replaced with underscores (e.g. `01-Projects/2026 Operational Reporting/` → `2026_operational_reporting`). Store this as the project tag.
 
-Search for Obsidian meeting notes linked to this project by scanning `02-AreasOfResponsibility/Notes/` for files whose YAML frontmatter contains the project tag. These are meeting notes that were tagged during meeting-prep and represent work discussed or decided in the context of this project.
+Search for Obsidian meeting notes linked to this project by scanning the resolved `notes-path` for files whose YAML frontmatter contains the project tag. These are meeting notes that were tagged during meeting-prep and represent work discussed or decided in the context of this project.
 
 For each project, fetch tasks from the matching Todoist project (match by `name` from frontmatter — use the project name as the Todoist project filter):
 

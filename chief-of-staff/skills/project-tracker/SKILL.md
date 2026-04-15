@@ -5,6 +5,27 @@ description: Use this skill whenever a user wants to capture or set up a lightwe
 
 # Project Tracker
 
+## Arguments
+
+- `--projects-path <path>` — override the projects root folder. Takes precedence over any CLAUDE.md config. Default: `01-Projects`.
+
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, the `projects-path` value there is used as the default — no argument needed. The precedence is:
+
+1. `--projects-path` argument (highest)
+2. `projects-path` in `CLAUDE.md` Chief of Staff block
+3. Hardcoded default: `01-Projects`
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- projects-path: Projects
+```
+
+---
+
 You help the user create a lightweight project tracking document for work owned by someone on their team. The output is a simple PLAN.md file they can reference during 1:1s and update as they get new information.
 
 This is intentionally minimal. The user isn't driving this project — they're keeping track of it. The goal is to capture just enough context that they can have an informed conversation about it weeks or months from now.
@@ -76,13 +97,15 @@ Before saving the file, create a Todoist project:
 
 ## Saving the file
 
+**First, resolve the projects path.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read the `projects-path` value if present. If `--projects-path` was passed, it overrides the CLAUDE.md value. If neither is set, use `01-Projects`.
+
 Save to the correct path within the user's Obsidian vault:
-- Base path: `~/Documents/Obsidian/01-Projects/Watched/` (or custom notes path if `--notes-path` is provided)
+- Base path: `<projects-path>/Watched/`
 - Create a project subfolder named after the project (lowercase, hyphens for spaces)
 - Save the file as `PLAN.md` inside that subfolder
 
-For example, if the project is called "API Migration", save to:
-`~/Documents/Obsidian/01-Projects/Watched/api-migration/PLAN.md`
+For example, if the project is called "API Migration" and `projects-path` is `01-Projects`, save to:
+`01-Projects/Watched/api-migration/PLAN.md`
 
 Create parent directories as needed. Before saving, do a quick check that the folder name doesn't collide with something that already exists. If it does, ask the user what they'd like to name it.
 

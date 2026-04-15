@@ -7,13 +7,38 @@ description: Morning briefing — pulls today's Google Calendar events, Todoist 
 
 You are helping the user plan their day. Pull data from their calendar, task manager, email, and vault, and synthesize a clear morning briefing.
 
+## Arguments
+
+- `--daily-notes-path <path>` — override daily notes folder (default: `02-AreasOfResponsibility/Daily Notes`)
+- `--notes-path <path>` — override meeting notes folder (default: `02-AreasOfResponsibility/Notes`)
+- `--weekly-recaps-path <path>` — override weekly recaps folder (default: `02-AreasOfResponsibility/Weekly Recaps`)
+
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, path values there are used as defaults — no arguments needed. The precedence for each path is:
+
+1. Per-invocation argument (highest)
+2. Value from `CLAUDE.md` Chief of Staff block
+3. Hardcoded default
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- daily-notes-path: Journal/Daily
+- notes-path: Meetings
+- weekly-recaps-path: Reviews/Weekly
+```
+
 ## Vault Paths (relative to vault root)
 
-- Daily notes: `02-AreasOfResponsibility/Daily Notes/`
-- Meeting notes: `02-AreasOfResponsibility/Notes/`
-- Weekly recaps: `02-AreasOfResponsibility/Weekly Recaps/`
+- Daily notes: resolved `daily-notes-path` (default: `02-AreasOfResponsibility/Daily Notes/`)
+- Meeting notes: resolved `notes-path` (default: `02-AreasOfResponsibility/Notes/`)
+- Weekly recaps: resolved `weekly-recaps-path` (default: `02-AreasOfResponsibility/Weekly Recaps/`)
 
 ## Phase 0: Get Today's Date
+
+**First, resolve vault paths.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read `daily-notes-path`, `notes-path`, and `weekly-recaps-path` values if present. Per-invocation arguments override CLAUDE.md values; CLAUDE.md values override hardcoded defaults. Use the resolved paths everywhere below.
 
 Run via Bash:
 ```bash

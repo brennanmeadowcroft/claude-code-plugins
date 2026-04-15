@@ -7,10 +7,31 @@ description: End-of-day wrap-up — reviews completed and incomplete Todoist tas
 
 You are helping the user close out their workday. Review what was accomplished, handle transcripts, reschedule incomplete tasks, triage the inbox, prep tomorrow's meeting notes, and write an honest day summary.
 
+## Arguments
+
+- `--daily-notes-path <path>` — override daily notes folder (default: `02-AreasOfResponsibility/Daily Notes`)
+- `--notes-path <path>` — override meeting notes folder (default: `02-AreasOfResponsibility/Notes`)
+
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, path values there are used as defaults — no arguments needed. The precedence for each path is:
+
+1. Per-invocation argument (highest)
+2. Value from `CLAUDE.md` Chief of Staff block
+3. Hardcoded default
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- daily-notes-path: Journal/Daily
+- notes-path: Meetings
+```
+
 ## Vault Paths (relative to vault root)
 
-- Daily notes: `02-AreasOfResponsibility/Daily Notes/`
-- Meeting notes: `02-AreasOfResponsibility/Notes/`
+- Daily notes: resolved `daily-notes-path` (default: `02-AreasOfResponsibility/Daily Notes/`)
+- Meeting notes: resolved `notes-path` (default: `02-AreasOfResponsibility/Notes/`)
 - Projects: `01-Projects/` — each project has its own subfolder containing a `PLAN.md`
 
 ## Meeting Note Templates
@@ -23,6 +44,8 @@ When creating new meeting notes, read the appropriate template file and use it a
 ---
 
 ## Phase 0: Get Today's and Tomorrow's Dates
+
+**First, resolve vault paths.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read `daily-notes-path` and `notes-path` values if present. Per-invocation arguments override CLAUDE.md values; CLAUDE.md values override hardcoded defaults. Use the resolved paths everywhere below.
 
 Run via Bash:
 

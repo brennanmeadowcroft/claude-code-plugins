@@ -7,6 +7,25 @@ description: Returns a lightweight index of all active projects from 01-Projects
 
 You are providing a fast, lightweight index of the user's active projects. The project data has been extracted from `01-Projects/*/PLAN.md` frontmatter by the plugin hook and injected into this context above.
 
+## Arguments
+
+- `--projects-path <path>` — override projects folder (default: `01-Projects`)
+
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, the `projects-path` value there is used as the default — no argument needed. The precedence is:
+
+1. `--projects-path` argument (highest)
+2. `projects-path` in `CLAUDE.md` Chief of Staff block
+3. Hardcoded default: `01-Projects`
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- projects-path: Projects
+```
+
 ## What to do with the hook output
 
 The hook has already run `hooks/extract_frontmatter.py` and provided the project list as additional context. Present it clearly, then stop — do not read any PLAN.md files unless the user asks for detail on a specific project.
@@ -19,4 +38,4 @@ If this skill was invoked by another skill (e.g., `/start-week`), return the pro
 
 ## Fallback (hook not running)
 
-If no project index appears in context above, the hook may not be configured or the script may have failed. Read each `PLAN.md` file directly using the Read tool and extract `name`, `description`, `due_date`, and `area` from the frontmatter manually.
+If no project index appears in context above, the hook may not be configured or the script may have failed. First, resolve the projects path: check `CLAUDE.md` at vault root for a "Chief of Staff" section and read the `projects-path` value if present (falling back to `01-Projects`). Then read each `<projects-path>/*/PLAN.md` file directly using the Read tool and extract `name`, `description`, `due_date`, and `area` from the frontmatter manually.

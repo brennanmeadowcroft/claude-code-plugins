@@ -7,23 +7,41 @@ description: Process meeting transcripts into structured Obsidian meeting notes 
 
 You are helping the user turn raw meeting transcripts into structured meeting notes. For each meeting, you will read the transcript, generate a comprehensive summary, write it into the appropriate Obsidian note, and create Todoist tasks for any action items.
 
-## Vault Paths (relative to vault root)
-
-- Meeting notes: `02-AreasOfResponsibility/Notes/`
-- Transcript base directory: `~/Nextcloud/Meeting Uploads/`
-
 ## Arguments
 
+- `--notes-path <path>` — override meeting notes folder (default: `02-AreasOfResponsibility/Notes`)
 - `--date <YYYY-MM-DD>` — the meeting date to process (default: today)
 - `--meeting <name>` — process only this single meeting by calendar event title
 - `--note-file <path>` — explicit path to the Obsidian meeting note (bypasses auto-detection)
 - `--transcript-file <path>` — explicit path to the transcript file (bypasses auto-detection)
+
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, the `notes-path` value there is used as the default — no argument needed. The precedence is:
+
+1. `--notes-path` argument (highest)
+2. `notes-path` in `CLAUDE.md` Chief of Staff block
+3. Hardcoded default: `02-AreasOfResponsibility/Notes`
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- notes-path: Meetings
+```
+
+## Vault Paths (relative to vault root)
+
+- Meeting notes: resolved `notes-path` (default: `02-AreasOfResponsibility/Notes/`)
+- Transcript base directory: `~/Nextcloud/Meeting Uploads/`
 
 If both `--note-file` and `--transcript-file` are provided, skip Phases 1 and 2 and jump directly to Phase 3.
 
 ---
 
 ## Phase 0: Setup
+
+**First, resolve the notes path.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read the `notes-path` value if present. If `--notes-path` was passed, it overrides the CLAUDE.md value. If neither is set, use `02-AreasOfResponsibility/Notes`. Use the resolved path everywhere below.
 
 Get today's date via Bash:
 

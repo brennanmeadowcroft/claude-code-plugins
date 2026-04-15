@@ -17,6 +17,21 @@ This skill can run in two modes:
 - `--areas-path <path>` — override areas of responsibility root folder (default: `02-AreasOfResponsibility`)
 - `--summary` — run in summary mode (no interaction, structured output only)
 
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, the `areas-path` value there is used as the default — no argument needed. The precedence is:
+
+1. `--areas-path` argument (highest)
+2. `areas-path` in `CLAUDE.md` Chief of Staff block
+3. Hardcoded default: `02-AreasOfResponsibility`
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- areas-path: Areas
+```
+
 ## Vault Paths (relative to vault root)
 
 - Areas of responsibility: `02-AreasOfResponsibility/` (subfolders, excluding `Daily Notes`, `Weekly Recaps`, `Notes`)
@@ -25,7 +40,9 @@ This skill can run in two modes:
 
 ## Phase 1: Discover Areas
 
-List the subfolders of the areas path (default: `02-AreasOfResponsibility/`). Exclude system folders: `Daily Notes`, `Weekly Recaps`, `Notes`. Each remaining subfolder is one AOR. Its folder name must match the corresponding Todoist project name exactly.
+**First, resolve the areas path.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read the `areas-path` value if present. If `--areas-path` was passed, it overrides the CLAUDE.md value. If neither is set, use `02-AreasOfResponsibility`.
+
+List the subfolders of the resolved areas path. Exclude system folders: `Daily Notes`, `Weekly Recaps`, `Notes`. Each remaining subfolder is one AOR. Its folder name must match the corresponding Todoist project name exactly.
 
 If no subfolders are found (or the path doesn't exist):
 - **Standalone:** Tell the user no AOR folders were found and skip to closing.

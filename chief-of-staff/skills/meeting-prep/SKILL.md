@@ -7,12 +7,35 @@ description: Prepare for a meeting by gathering context from Google Calendar, To
 
 You are helping the user prepare for a meeting. Your job is to gather relevant context from multiple sources, distill it into a concise agenda, and write a meeting note they can reference during the conversation.
 
+## Arguments
+
+- `--notes-path <path>` — override meeting notes folder (default: `02-AreasOfResponsibility/Notes`)
+- `--projects-path <path>` — override projects folder (default: `01-Projects`)
+
+## Configuration
+
+If a `CLAUDE.md` exists at the vault root with a **Chief of Staff** config block, path values there are used as defaults — no arguments needed. The precedence for each path is:
+
+1. Per-invocation argument (highest)
+2. Value from `CLAUDE.md` Chief of Staff block
+3. Hardcoded default
+
+Example `CLAUDE.md` block:
+
+```
+## Chief of Staff
+- notes-path: Meetings
+- projects-path: Projects
+```
+
 ## Vault Paths (relative to vault root)
 
-- Meeting notes: `02-AreasOfResponsibility/Notes/`
-- Projects: `01-Projects/` — each project has its own subfolder containing a `PLAN.md`
+- Meeting notes: resolved `notes-path` (default: `02-AreasOfResponsibility/Notes/`)
+- Projects: resolved `projects-path` (default: `01-Projects/`) — each project has its own subfolder containing a `PLAN.md`
 
 ## Phase 0: Identify the Meeting
+
+**First, resolve vault paths.** Check `CLAUDE.md` at vault root for a "Chief of Staff" section and read `notes-path` and `projects-path` values if present. Per-invocation arguments override CLAUDE.md values; CLAUDE.md values override hardcoded defaults. Use the resolved paths everywhere below.
 
 Start by figuring out which meeting the user is preparing for. You need:
 
