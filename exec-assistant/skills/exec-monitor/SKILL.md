@@ -79,10 +79,10 @@ Store the resolved output path with each task for use in Phase 4 and Phase 5.
 
 ## Phase 3.6 — Check for deep-research availability
 
-Attempt to determine if the `deep-research` skill is available by checking if the `research-toolkit` plugin is installed. You can test this with:
+Attempt to determine if the `deep-research` skill is available by checking if the `research-toolkit` plugin is installed. Use `CLAUDE_PLUGIN_ROOT` to locate sibling plugins in the same marketplace source:
 
 ```bash
-ls ~/.claude/plugins/research-toolkit/skills/deep-research/SKILL.md 2>/dev/null && echo "available" || echo "unavailable"
+ls "$(dirname "${CLAUDE_PLUGIN_ROOT}")/research-toolkit/skills/deep-research/SKILL.md" 2>/dev/null && echo "available" || echo "unavailable"
 ```
 
 Set a session flag `deep_research_available` to `true` or `false` based on the result. This flag is used in Phase 4 to route research tasks.
