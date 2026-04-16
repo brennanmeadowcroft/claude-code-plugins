@@ -222,6 +222,9 @@ Then generate a structured summary using the following prompt:
 > - Strategic ideas discussed but not tied to a specific Brennan commitment
 > - Work Brennan is already doing as part of his ongoing role
 >
+> **Direct Report Check-in (1:1s with direct reports):**
+> If the meeting notes include a `### Direct Report Check-in` section, you MUST include a `### Direct Report Check-in` section in the summary output, positioned after `### Summary` and before `### Follow-Ups`. For each item that appeared in the notes (Priorities, Tactical, Engagement Pulse, Skill Development, Quarterly Goals Review), capture what was said or discussed in the transcript. Use the same bullet names. If a topic was not discussed, write "not discussed." This section must be preserved in full so future meeting prep can carry forward prior responses.
+>
 > **Discussion Follow-Ups:**
 > Capture ideas or themes that got traction but did not resolve into a concrete commitment from anyone:
 > - Keep each item to one or two sentences describing the idea and why it matters
@@ -248,6 +251,25 @@ Then generate a structured summary using the following prompt:
 >
 > #### Topic 3
 > - This topic was on the agenda but not discussed in the meeting
+>
+> ### Direct Report Check-in
+> *(only present if meeting notes included this section)*
+> - Priorities
+>     - {what they said their priorities are}
+> - Tactical
+>     - {coaching needs or blockers discussed}
+> - Engagement Pulse
+>     - Certainty: {observations}
+>     - Autonomy: {observations}
+>     - Meaning: {observations}
+>     - Progress: {observations}
+>     - Social inclusion: {observations}
+> - Skill Development
+>     - Skill area: {what they named}
+>     - Last week: {what they did}
+>     - Next week: {what they plan}
+> - Quarterly Goals Review
+>     - {what was discussed}
 >
 > ### Follow-Ups
 > - <follow up details>

@@ -48,6 +48,15 @@ Start by figuring out which meeting the user is preparing for. You need:
 
 If the user refers to an attendee by first name or alias only (e.g., "meeting with Carolyn"), call `find_contact` with that name before searching the calendar. If a match is found, use the canonical full name and email for all subsequent lookups. If not found, proceed with the user's input as-is.
 
+After resolving the attendee contact, check whether the returned contact object has `is_direct_report: true`. Set an `is_direct_report` flag for use in Phase 1 and Phase 3. If no contact was found or the field is absent, treat it as false.
+
+**Example `contacts.yaml` entry for a direct report:**
+```yaml
+- name: "Alice Smith"
+  email: "alice@company.com"
+  is_direct_report: true
+```
+
 If the user already provided this information in their message, don't re-ask — just confirm what you understood and proceed. The user may not have all three; work with whatever they give you.
 
 ## Phase 1: Gather Context
@@ -118,6 +127,39 @@ This is especially valuable when the user provides minimal context — email thr
 
 Check the current week's planning file at `02-AreasOfResponsibility/Weekly Recaps/` (the most recent `YYYY-WNN.md` file). If it exists, extract the priorities section. This provides context about what the user is focused on this week, which helps identify which agenda items matter most and surfaces relevant work that might not be in Todoist or the plan.
 
+### Direct Report Cadence Check
+
+This subsection only runs when `is_direct_report = true` and a recurring note file exists.
+
+**Goal:** Determine which structured check-in sections to include in the meeting note based on meeting history.
+
+**Step 1: Read the note's YAML frontmatter.** Extract the following fields (treat missing fields as null):
+- `last_pulse_date` — date the Engagement Pulse section was last included
+- `last_skill_date` — date the Skill Development section was last included
+- `last_goals_date` — date the Quarterly Goals Review was last included
+
+**Step 2: Count past meetings.** Use Grep or Bash to count `## YYYY-MM-DD` heading lines in the note body:
+```bash
+grep -c "^## [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}" "{note-file-path}"
+```
+Also collect the list of those dates to determine how many meetings occurred after each `last_*_date`.
+
+**Step 3: Determine which sections to include:**
+- **Priorities check**: Always include
+- **Tactical**: Always include
+- **Engagement Pulse**: Include if `last_pulse_date` is null, OR the number of `## YYYY-MM-DD` sections dated after `last_pulse_date` is ≥ 2
+- **Skill Development**: Include if `last_skill_date` is null, OR the number of `## YYYY-MM-DD` sections dated after `last_skill_date` is ≥ 2
+- **Quarterly Goals Review**: Include if `last_goals_date` is null, OR `floor((today_month - 1) / 3) != floor((last_goals_month - 1) / 3)` — i.e., today is in a different calendar quarter than `last_goals_date`
+
+**Step 4: Extract prior responses for carry-forward.** If Engagement Pulse or Skill Development is being included, scan the most recent `## YYYY-MM-DD` date section in the note for a `### Direct Report Check-in` subsection. Extract any content under `- Engagement Pulse` and `- Skill Development` headings to use as carry-forward context in Phase 3.
+
+Store the results of this phase as:
+- `include_pulse` (bool)
+- `include_skill` (bool)
+- `include_goals` (bool)
+- `prior_pulse_summary` (text or null)
+- `prior_skill_summary` (text or null)
+
 ### CheckWithContact Tasks
 
 This subsection only runs for **1:1 meetings**. After resolving the attendee's full name via `find_contact` in Phase 0, query Todoist for tasks marked with the `@CheckWithContact` label that contain the attendee's first name in the task content (formatted as `[{first name}] {content}`).
@@ -145,6 +187,65 @@ Go through every piece of information gathered and classify each item into one o
 **Open question** — Strategic or process questions where the gap is acknowledged but there may not be a clear decision to make yet. Signals: "we don't know how to," "need to figure out," "no clear approach." Discussion starters at the end.
 
 ## Phase 3: Build the Agenda
+
+### Direct Report Check-in Section
+
+When `is_direct_report = true`, build a `### Direct Report Check-in` section using the flags from Phase 1. This section is positioned **between `### My Topics` and `### Their Topics`** in the meeting note.
+
+Always include:
+
+```
+### Direct Report Check-in
+
+- Priorities
+	- What are your priorities this week?
+
+- Tactical
+	- Where would coaching, feedback, or guidance help? Any blockers to clear?
+```
+
+If `include_pulse = true`, add:
+
+```
+- Engagement Pulse
+	- Certainty: Do they have clarity on what's expected and how success is measured?
+	- Autonomy: Do they feel ownership over how they get their work done?
+	- Meaning: Is the work feeling worthwhile and connected to something bigger?
+	- Progress: Do they feel like they're moving forward — in their work and their growth?
+	- Social inclusion: Do they feel valued and connected to the team?
+```
+
+If `prior_pulse_summary` is not null, add as a final sub-bullet under Engagement Pulse:
+```
+	- Last time: {prior_pulse_summary}
+```
+
+If `include_skill = true`, add:
+
+```
+- Skill Development
+	- What skill or knowledge area are you actively working on?
+	- What action did you take on that in the past week?
+	- What action will you take in the coming week?
+```
+
+If `prior_skill_summary` is not null, add as a final sub-bullet under Skill Development:
+```
+	- Last time: {prior_skill_summary}
+```
+
+If `include_goals = true`, add:
+
+```
+- Quarterly Goals Review
+	- Where do you want to develop this quarter?
+	- How does your current work ladder up to that growth?
+	- What support do you need from me?
+```
+
+Use tab characters (not spaces) for all indentation in this section.
+
+---
 
 Structure the agenda under `### My Topics` following these rules:
 
@@ -208,6 +309,17 @@ If a plan was referenced, add a _snake case_ tag of the project name to the fron
 
 Replace `MEETING_DATE` with the date from the calendar event (or today if no event was found) in a YYYY-MM-DD format.
 
+**Direct report frontmatter update (recurring notes only):** If `is_direct_report = true`, also update the note's YAML frontmatter to record which sections were included today. Do this as a separate Edit after inserting the date section:
+
+- If `include_pulse = true`, set `last_pulse_date` to today's date (YYYY-MM-DD)
+- If `include_skill = true`, set `last_skill_date` to today's date
+- If `include_goals = true`, set `last_goals_date` to today's date
+
+Handle three cases:
+1. **Fields already exist in frontmatter** — use Edit to replace each field line: `old_string: "last_pulse_date: "` → `new_string: "last_pulse_date: 2026-04-16"` (etc.)
+2. **Note created from template (new note)** — template already includes the fields; update in the same step as creating the file
+3. **Note predates this feature (fields missing)** — add all three fields before the closing `---` of the frontmatter. Use the closing `---` as the anchor: append the missing fields before it
+
 ### New meetings (no existing note)
 
 Create the file at `02-AreasOfResponsibility/Notes/{meeting name}.md` using the template from "./templates/adhoc-meeting.md" with the date and agenda items filled in.
@@ -215,6 +327,8 @@ Create the file at `02-AreasOfResponsibility/Notes/{meeting name}.md` using the 
 Replace `MEETING_DATE` with the date from the calendar event (or today if no event was found) in a YYYY-MM-DD format.
 
 If a plan was referenced, add a _snake case_ tag of the project name to the frontmatter (e.g. "Policy Peer Review Skill" becomes "policy_peer_review_skill"). The project name is based on the project folder name or todoist project name; they are both named the same.
+
+**Note on direct report 1:1 notes:** For new recurring 1:1 notes created for direct reports, the template already includes `last_pulse_date`, `last_skill_date`, and `last_goals_date` fields. Set any triggered sections' dates to today when writing the initial file.
 
 ### After writing
 
