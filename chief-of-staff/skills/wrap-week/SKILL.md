@@ -73,7 +73,7 @@ Events with titles starting with `[IT]` are intentional focus blocks, not meetin
 
 **Next week's calendar:** `list-events` for NEXT_WEEK_START through NEXT_WEEK_END. Note meeting load, any heavy days, and commitments that need prep.
 
-**Daily notes:** Read each `02-AreasOfResponsibility/Daily Notes/YYYY-MM-DD.md` for Mon–Fri this week. For each note that exists, extract: accomplishments, blockers, recurring themes, any project mentions, and end-of-day reflections. Note how many days have notes vs. don't.
+**Daily notes:** Read each `02-AreasOfResponsibility/Daily Notes/YYYY-MM-DD.md` for Mon–Fri this week. For each note that exists, extract: accomplishments, blockers, recurring themes, any project mentions, and end-of-day reflections. Pay special attention to the `### Reflection` subsection within `## End of Day` — these are the user's verbatim thoughts on each day and are the primary source for Phase 2's reflection synthesis. Note how many days have notes vs. don't.
 
 **Current week file:** Check if `02-AreasOfResponsibility/Weekly Recaps/WEEK_NUM.md` exists. If so, read it — preserve existing frontmatter and Priorities/Key Projects sections.
 
@@ -98,6 +98,33 @@ One sentence on the dominant theme (e.g., "A heads-down execution week on [proje
 Examples: "Most productive stretch was Tue–Wed before the afternoon standup block", "Three p1 tasks deferred again."
 
 Present the recap to the user. They can confirm it as-is or add a note. Keep this phase brief — the goal is to capture the week, not relitigate it.
+
+### Daily Reflection Themes
+
+After the narrative recap, synthesize the `### Reflection` entries from this week's daily notes. Look for:
+
+- **Recurring topics** — themes or concerns that appeared more than once (e.g., a relationship friction, a recurring blocker, an energy pattern)
+- **1:1 fodder** — things worth raising with a direct report, manager, or peer in an upcoming 1:1
+- **Project or idea seeds** — nascent ideas or problems the user surfaced that haven't turned into a Todoist task yet
+- **Signals worth watching** — anything that felt like a one-off but might be worth monitoring
+
+Present this as a short bulleted list (3–6 items max). Label each with one of: `[1:1]`, `[idea]`, `[pattern]`, or `[watch]`. Skip the section entirely if fewer than 2 daily notes had reflections.
+
+Example:
+```
+**From this week's reflections:**
+- [pattern] Three days mentioned feeling context-switched before 10am — calendar structure may be a factor
+- [1:1] Tension with the API naming decision came up Tue + Thu — worth surfacing with the team
+- [idea] Mentioned wanting a "one-pager for onboarding" twice — no task exists yet
+```
+
+### Weekly Reflection
+
+After presenting the recap and reflection themes, ask the user:
+
+> "Before we move to next week — how are you feeling about the week overall? Anything on your mind you want to get down before we move on?"
+
+Accept free-form input. Record their response verbatim for inclusion in the recap file. If the user skips, record "—". This is intentionally low-pressure — a single sentence is fine.
 
 ---
 
@@ -236,6 +263,14 @@ tags: [weekly-recap, weekly-plan]
 ## Carried Forward
 
 [Incomplete items and where they're headed]
+
+## Daily Reflection Themes
+
+[Synthesized themes from this week's daily note reflections — labeled [1:1], [idea], [pattern], or [watch]. Omit section if fewer than 2 daily notes had reflections.]
+
+## Weekly Reflection
+
+[User's verbatim response to "How are you feeling about the week?" — or "—" if skipped]
 
 ## Areas Reviewed
 
