@@ -357,7 +357,7 @@ Then ask:
 
 Wait for the user's response. Parse it to determine which items to create:
 - "all" → create every item
-- "none" → skip all, proceed to Phase 6
+- "none" → skip all, proceed to Phase 7
 - "1, 3" or "1 and 3" → create only those numbered items
 - "skip 2" or "all except 2" → create all except the excluded ones
 
@@ -373,7 +373,40 @@ After creating tasks, confirm to the user how many were created.
 
 ---
 
-## Phase 6: Final Report
+## Phase 6: Index into Meeting Memory
+
+If `.meeting-memory/` exists at the vault root, index the processed note into the meeting memory vector store. Skip silently if the directory does not exist.
+
+For each meeting processed in this run, assemble the JSON record and pipe it to the index script:
+
+```bash
+python3.13 .claude/skills/index-meeting-note/scripts/save_meeting_note.py <<'EOF'
+{
+  "content": "<full text of the note section just written>",
+  "date": "<YYYY-MM-DD meeting date>",
+  "meeting_name": "<contact name for 1:1s, or meeting title>",
+  "meeting_type": "<1:1 or meeting>",
+  "source_file": "<vault-relative path to the note file>",
+  "project_tags": [],
+  "attendees": "<contact name for 1:1s, empty for other meetings>"
+}
+EOF
+```
+
+### Determining project_tags
+
+Before running the command, infer which projects were meaningfully discussed:
+
+1. Glob `01-Projects/` to get canonical project folder names
+2. Read through the summary you just wrote — identify any projects where a meaningful portion of the conversation focused on that project (not just a brief mention)
+3. Convert matching project names to slug form: lowercase, spaces replaced with hyphens (e.g. `"Day Manager"` → `"day-manager"`)
+4. Pass those slugs as `project_tags`. Use `[]` if no project was a significant focus.
+
+This only applies to **1:1 meetings**. For ad-hoc meetings, use the frontmatter `tags` value as a single-item list (or `[]` if no tag).
+
+---
+
+## Phase 7: Final Report
 
 Print a summary table:
 
