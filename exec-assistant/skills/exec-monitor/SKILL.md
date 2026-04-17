@@ -2,7 +2,7 @@
 name: exec-monitor
 description: "Poll Todoist for tasks labelled @claude, dispatch specialized agents to complete them, and deliver results back. Use when running the exec-assistant task monitor — manually or via scheduled cron. Trigger on: 'run exec monitor', 'check for Claude tasks', 'check my assigned tasks'."
 argument-hint: "[--dry-run] [--notes-path <vault-root>]"
-allowed-tools: Task, Bash, Read, Write, Skill
+allowed-tools: Task, Bash, Read, Write, Skill, mcp__personal-context__list_context_files, mcp__personal-context__get_context_file
 ---
 
 # Exec Assistant Task Monitor
@@ -102,6 +102,16 @@ If a RAPID is required:
 
 ---
 
+## Phase 3.8 — Load user voice context
+
+Call `mcp__personal-context__list_context_files` to get available context topics.
+
+Look for a topic related to communication style or voice (e.g., `communication-style`, `voice`, `writing-style`). If one is found, call `mcp__personal-context__get_context_file` with that topic name and store the result as `voice_context`.
+
+If no voice/communication-style topic exists, set `voice_context` to `null` and proceed — this step is best-effort.
+
+---
+
 ## Phase 4 — Select and dispatch agents
 
 For each claimed task, determine which agent to use:
@@ -125,7 +135,7 @@ For research tasks (`task-research-agent` would normally handle these):
     "body": "{full output from deep-research skill}"
   }
   ```
-- **If `deep_research_available` is false**: Use the Task tool to dispatch `task-research-agent` as normal.
+- **If `deep_research_available` is false**: Use the Task tool to dispatch `task-research-agent`. Pass the same fields as other agents (task content, description, ID, project, output path, labels, RAPID Required, RAPID Template, and `User Voice Context`).
 
 For other tasks (schedule, general), use the Task tool with the appropriate agent. Pass:
 ```
@@ -137,6 +147,7 @@ Output path (if research): {resolved-output-path}
 Labels: {task.labels}
 RAPID Required: {rapid_required | false}
 RAPID Template: {rapid_template_content | ""}
+User Voice Context: {voice_context | ""}
 
 Complete this task and return a JSON result in this exact format:
 {
@@ -148,6 +159,8 @@ Complete this task and return a JSON result in this exact format:
 ```
 
 If `RAPID Required` is true, the agent should use the RAPID template as the structure for its output instead of the standard research findings format. Fill in all sections of the RAPID with the research findings. Leave names blank unless provided in the task content or description.
+
+`User Voice Context` contains the user's personal communication style. Pass it to all agents except when `deep_research_available` is true (deep-research output is a neutral research artifact). Research agents must apply voice only to RAPID output, not to standard research reports.
 
 Dispatch tasks in parallel where possible. Collect all results before proceeding to Phase 5.
 

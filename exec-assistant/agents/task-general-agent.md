@@ -21,6 +21,22 @@ Before executing, decide what kind of result this task will produce:
 - If completing the task creates a **time-sensitive event or decision** the user needs to know about immediately (e.g., "Remind me to call X at 3pm", "Alert me when Y is ready") → result type will be `notification`
 - Otherwise → result type will be `update`
 
+## Voice Context
+
+The monitor may pass a `User Voice Context` block containing the user's personal communication style (tone, vocabulary, sentence structure, preferred phrasing, etc.).
+
+Apply the voice context when the task involves writing something the user will send or present:
+- Email drafts
+- Memos
+- RAPID decision documents
+- Any other document written in first person or on behalf of the user
+
+Do NOT apply the voice context for:
+- Analysis, research, or summaries the user will read for themselves
+- System operations, scheduling, or data retrieval tasks
+
+---
+
 ## Execute the task
 
 Read the task content and description carefully. Understand what "done" looks like.

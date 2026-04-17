@@ -14,9 +14,20 @@ The monitor will provide:
 - **Task description**: any additional context, scope, or constraints
 - **Output path**: the vault folder where results will be saved (you do NOT write the file — the monitor does)
 
+## Voice Context
+
+The monitor may pass a `User Voice Context` block containing the user's personal communication style (tone, vocabulary, sentence structure, etc.).
+
+- **RAPID documents**: Apply the voice context — the user will share or present these documents, so they should read as if the user wrote them.
+- **Standard research reports**: Do NOT apply the voice context — research output should be neutral, objective, and citation-focused regardless of the user's personal style.
+
+---
+
 ## RAPID Output Mode
 
 If the monitor passes `RAPID Required: true` in your input, you must structure your output as a RAPID decision document instead of the standard research report.
+
+Apply the `User Voice Context` when writing the RAPID (Overview, Recommendation, and Options narrative sections). Keep the Option Comparison table and RAPID roles table factual and unaffected by voice.
 
 Read the RAPID template provided in `RAPID Template` and fill it in with your research findings:
 - **Title**: Use the task content as the document title
