@@ -33,9 +33,24 @@
       "description": "Codebase orientation skills for mapping structure, interactive exploration, task-driven learning, and health analysis before large changes"
     },
     {
+      "name": "personal-context",
+      "source": "./personal-context",
+      "description": "Personal identity and preferences MCP server — contacts, communication style, and context files. Infrastructure layer used by all other plugins."
+    },
+    {
       "name": "chief-of-staff",
       "source": "./chief-of-staff",
-      "description": "AI-enabled executive assistant for daily briefings, weekly planning, project tracking, and end-of-day wrap-up using Todoist, Google Calendar, Gmail, and Obsidian"
+      "description": "Orchestration layer — daily briefings, weekly planning, and end-of-day wrap-up. Coordinates secretary, project-manager, and personal-context plugins."
+    },
+    {
+      "name": "secretary",
+      "source": "./secretary",
+      "description": "Meeting lifecycle — prep, transcript processing, note indexing, and meeting memory queries. Owns the ChromaDB meeting memory store."
+    },
+    {
+      "name": "project-manager",
+      "source": "./project-manager",
+      "description": "Project planning and tracking — creates project plans, monitors health against Todoist, and maintains the project index. Owns the project folder schema."
     },
     {
       "name": "exec-assistant",

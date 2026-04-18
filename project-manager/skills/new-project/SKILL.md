@@ -1,6 +1,6 @@
 ---
 name: new-project
-description: Create a new project — Obsidian folder and PLAN.md (via /project-planner for your own projects, or /project-tracker for team member projects), plus a matching Todoist project in the right location. Trigger on phrases like "create a new project", "start a new project", "set up a project", "add a project", or when the user wants to kick off something new and needs both a planning document and a Todoist project created together.
+description: Create a new project — Obsidian folder and PLAN.md (via /project-manager:project-planner for your own projects, or /project-manager:project-tracker for team member projects), plus a matching Todoist project in the right location. Trigger on phrases like "create a new project", "start a new project", "set up a project", "add a project", or when the user wants to kick off something new and needs both a planning document and a Todoist project created together.
 ---
 
 # New Project
@@ -36,8 +36,8 @@ Then ask the user two questions (they can answer both at once):
 
 1. **Project name** — what's this project called?
 2. **Ownership** — is this _your_ project, or are you tracking it for someone on your team?
-   - _Mine_ → full project plan via `/project-planner`, saved to `<projects-path>/<slug>/`
-   - _Team member's_ → lightweight tracker via `/project-tracker`, saved to `<projects-path>/Watched/<slug>/`
+   - _Mine_ → full project plan via `/project-manager:project-planner`, saved to `<projects-path>/<slug>/`
+   - _Team member's_ → lightweight tracker via `/project-manager:project-tracker`, saved to `<projects-path>/Watched/<slug>/`
 
 Derive a `slug` from the project name: lowercase, spaces to hyphens, strip special characters (e.g., "API Migration" → `api-migration`).
 
@@ -96,19 +96,19 @@ The API returns a project object — capture the `id` for reference.
 
 Once the Todoist project is created, invoke the appropriate skill. Pass the project name and target save path as context so the skill doesn't need to re-ask.
 
-**Own project → `/project-planner`**
+**Own project → `/project-manager:project-planner`**
 
 Say:
 
-> "Todoist project created. Now let's build out the plan — I'll run /project-planner for you."
+> "Todoist project created. Now let's build out the plan — I'll run /project-manager:project-planner for you."
 > "When it asks where to save, the target path is `<projects-path>/<slug>/PLAN.md`."
 
-Then invoke `/project-planner`. It will interview the user and write the PLAN.md. Remind it (in your handoff context) to save the file at `<projects-path>/<slug>/PLAN.md`.
+Then invoke `/project-manager:project-planner`. It will interview the user and write the PLAN.md. Remind it (in your handoff context) to save the file at `<projects-path>/<slug>/PLAN.md`.
 
-**Team member's project → `/project-tracker`**
+**Team member's project → `/project-manager:project-tracker`**
 
 Say:
 
-> "Todoist project created. Let me set up the tracker now — I'll run /project-tracker for you."
+> "Todoist project created. Let me set up the tracker now — I'll run /project-manager:project-tracker for you."
 
-Then invoke `/project-tracker`. Remind it (in your handoff context) to save the file at `<projects-path>/Watched/<slug>/PLAN.md` — not the default `Watched/<slug>/PLAN.md`, since we're placing it under the configured projects path.
+Then invoke `/project-manager:project-tracker`. Remind it (in your handoff context) to save the file at `<projects-path>/Watched/<slug>/PLAN.md` — not the default `Watched/<slug>/PLAN.md`, since we're placing it under the configured projects path.

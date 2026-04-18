@@ -1,0 +1,9 @@
+{
+  "name": "personal-context",
+  "version": "1.0.0",
+  "description": "Personal identity and preferences MCP server — contacts, communication style, and context files. Infrastructure layer used by all other plugins.",
+  "author": {
+    "name": "Brennan Meadowcroft"
+  },
+  "keywords": ["personal", "context", "contacts", "preferences", "mcp"]
+}

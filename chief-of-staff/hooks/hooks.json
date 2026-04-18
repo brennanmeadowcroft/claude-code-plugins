@@ -1,35 +1,3 @@
 {
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "matcher": "project-index",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/extract_frontmatter.py\""
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/ensure_meeting_memory.py\""
-          }
-        ]
-      }
-    ],
-    "SubagentStart": [
-      {
-        "matcher": "project-index",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/extract_frontmatter.py\""
-          }
-        ]
-      }
-    ]
-  }
+  "hooks": {}
 }

@@ -172,7 +172,7 @@ A p1 task finished, a project milestone hit, or a day that ran particularly long
 
 ## Phase 5: Process Transcripts
 
-Run the `/process-transcripts` skill for today's meetings. Today's calendar events were already fetched in Phase 1 — pass that context so the skill does not need to re-fetch the calendar.
+Run the `/secretary:process-transcripts` skill for today's meetings. Today's calendar events were already fetched in Phase 1 — pass that context so the skill does not need to re-fetch the calendar.
 
 The skill will:
 - Check `~/Nextcloud/Meeting Uploads/TODAY/` for transcript files matching today's meetings
@@ -213,7 +213,7 @@ This is what enables `/start-day` to find relevant meeting notes via date-string
 
 1. Call `list-events` for TOMORROW to get tomorrow's calendar events.
 
-2. For each calendar event, use the /meeting-prep skill to prep the notes. Provide the meeting name and the meeting date.
+2. For each calendar event, use the /secretary:meeting-prep skill to prep the notes. Provide the meeting name and the meeting date.
 
    **d. All meetings get a note.** If a meeting has no note and the user declines to create one, note it explicitly: "Skipped note for '[Meeting Name]' — you'll need to create it manually if needed."
 

@@ -1,29 +1,81 @@
 # Chief of Staff
 
-AI-enabled executive assistant for Claude Code. Ten skills that work together to keep you deliberate about your time, on top of your projects, and moving purposefully through each day and week.
+AI-enabled orchestration layer for Claude Code. Five skills that keep you deliberate about your time and moving purposefully through each day and week — coordinating the `secretary`, `project-manager`, and `personal-context` plugins to give you a complete operating system.
 
-**The problem it solves:** Knowledge work is full of context-switching, accumulating commitments, and slow entropy — tasks slip, projects drift, and weeks end without a clear sense of what moved forward. Chief of Staff gives you a structured rhythm: open the week with intention, start each day with a real briefing, close the day cleanly, review the week honestly, and keep your projects from becoming a graveyard of half-finished plans.
+**The problem it solves:** Knowledge work is full of context-switching, accumulating commitments, and slow entropy — tasks slip, projects drift, and weeks end without a clear sense of what moved forward. Chief of Staff gives you a structured rhythm: open the week with intention, start each day with a real briefing, close the day cleanly, review the week honestly, and keep your projects and areas from drifting.
+
+---
+
+## Architecture
+
+Chief of Staff is an orchestration layer. It doesn't own project data or meeting memory — those belong to domain plugins that know how to manage them. Chief of Staff knows *when* and *why*; the domain plugins know *how*.
+
+```mermaid
+graph TD
+    subgraph infra["Infrastructure"]
+        PC["🧠 personal-context\n─────────────\nContacts, communication style,\npreferences & context files\n(MCP Server)"]
+    end
+
+    subgraph domain["Domain Plugins"]
+        direction LR
+        subgraph sec["secretary"]
+            MP[meeting-prep]
+            PT[process-transcripts]
+            AM[ask-meetings]
+            IMN[index-meeting-note]
+        end
+        subgraph pmgr["project-manager"]
+            PI[project-index]
+            PP[project-planner]
+            PMON[project-monitor]
+            NP[new-project]
+            PTR[project-tracker]
+        end
+    end
+
+    subgraph cos["chief-of-staff  (orchestration)"]
+        direction LR
+        SD[start-day]
+        SW[start-week]
+        FD[finish-day]
+        WW[wrap-week]
+        AOR[aor-review]
+    end
+
+    FD -- "/secretary:process-transcripts" --> PT
+    FD -- "/secretary:meeting-prep" --> MP
+    WW -- "/project-manager:project-monitor --summary" --> PMON
+    SW -- "/project-manager:project-index" --> PI
+    MP -- "/project-manager:project-index" --> PI
+    PT -- "index-meeting-note" --> IMN
+
+    cos -. "contacts / context" .-> PC
+    sec -. "contacts / context" .-> PC
+    pmgr -. "contacts / context" .-> PC
+```
+
+**Dependency direction:**
+- `personal-context` is infrastructure — install it first, no dependencies on anything else
+- `secretary` and `project-manager` are domain plugins — each owns its own data and operations
+- `chief-of-staff` is the orchestration layer — calls into domain plugins, never the reverse
 
 ---
 
 ## How the Skills Work Together
 
-The skills form an integrated operating cycle:
+The five CoS skills form a weekly operating cycle:
 
 ```
 Monday morning     → /start-week        Set 2–3 priorities, surface project deadlines, create the weekly file
 Each morning       → /start-day         Briefing: calendar, priority emails, weekly priorities, tasks, meeting notes
-Throughout week    → /project-index     Quick project status lookup (also called automatically by other skills)
-Throughout week    → /new-project       Create a project folder + Todoist project, then kick off planner or tracker
-Throughout week    → /project-planner   Turn a new initiative into a structured, phased plan
-Throughout week    → /project-tracker   Lightweight tracking for projects owned by your team
-Throughout week    → /project-monitor   Compare project plans against Todoist — surface gaps, stalls, deadlines
-Throughout week    → /aor-review        Review area health, surface backlog patterns, spin up projects as needed
-Each evening       → /finish-day        Close out: email triage, brain dump, reschedule, prep tomorrow's notes
+Each evening       → /finish-day        Close out: email triage, brain dump, reschedule, prep tomorrow's meeting notes
+Throughout week    → /aor-review        Review area health, surface backlog patterns, suggest spinning up projects
 Friday afternoon   → /wrap-week         Recap this week, plan next week with priorities, create next week's file
 ```
 
-The daily rhythm is the foundation: `/finish-day` each evening seeds the context that makes `/start-day` valuable the next morning. The weekly rhythm gives that daily context meaning — priorities set on Monday shape how you rank tasks and allocate focus all week. `/wrap-week` now creates next week's planning file during the Friday session, so you start Monday already oriented. The project skills keep the big picture (multi-week initiatives) connected to the daily and weekly ground level — `/project-monitor` and `/aor-review` run automatically inside `/wrap-week` but can also be run anytime independently.
+The daily rhythm is the foundation: `/finish-day` each evening seeds the context that makes `/start-day` valuable the next morning. The weekly rhythm gives that daily context meaning — priorities set on Monday shape how you rank tasks and allocate focus all week.
+
+**Orchestration:** `/finish-day` automatically calls `/secretary:process-transcripts` and `/secretary:meeting-prep` so meeting notes are processed and tomorrow's prep is ready without an extra step. `/wrap-week` silently calls `/project-manager:project-monitor --summary` and `/aor-review --summary` to inform priority-setting.
 
 ---
 
@@ -73,70 +125,16 @@ Set up `Priority/p1` and `Priority/p2` labels in Gmail and apply them to emails 
 
 If Gmail MCP is unavailable, both skills degrade gracefully and note that email data was skipped.
 
-### 4. Personal Context (optional)
+### 4. Personal Context
 
-The personal context server lets skills resolve attendee names and aliases to full identities, and access your personal context files (communication style, role, preferences, etc.). The server is registered automatically when the plugin loads — no manual setup required.
+The `personal-context` plugin is a separate installation that provides contact resolution and personal preference files to all plugins. Install it independently — see the `personal-context` plugin README for setup instructions.
 
-**Step 1:** Create the context directory and add a contacts file:
+### 5. Secretary and Project Manager
 
-```bash
-mkdir -p ~/.claude-personal/context
-```
+`/finish-day` and `/wrap-week` call into the `secretary` and `project-manager` plugins. Install both for the full operating cycle:
 
-Create `~/.claude-personal/context/contacts.yaml`:
-
-```yaml
-people:
-  - name: Carolyn Smith
-    email: carolyn.smith@company.com
-    aliases: [Carolyn, Carol]
-    team: Engineering
-    notes: VP of Engineering
-
-  - name: Bob Johnson
-    email: bjohnson@company.com
-    aliases: [Bob, BJ]
-    team: Product
-```
-
-**Step 2 (optional):** Add personal context markdown files to the same directory. File names become the topic key — drop any `.md` file there and it becomes available to skills:
-
-```
-~/.claude-personal/context/
-  communication-style.md
-  role-and-responsibilities.md
-  goals-and-priorities.md
-  preferences.md
-```
-
-The server re-reads files on every call — edit your contacts or context files at any time and changes take effect immediately. If `~/.claude-personal/context/` doesn't exist or `contacts.yaml` is absent, the server starts and returns empty results gracefully.
-
-**Claude Code:** Register the server manually after installing the plugin. Replace `1.0.0` with your installed version (check `~/.claude/plugins/cache/bmeadowcroft-plugins/chief-of-staff/` to confirm):
-
-```bash
-PLUGIN_PATH="$HOME/.claude/plugins/cache/bmeadowcroft-plugins/chief-of-staff/1.0.0/servers/personal-context"
-claude mcp add --transport stdio --scope user personal-context \
-  -- uv run --project "$PLUGIN_PATH" "$PLUGIN_PATH/server.py"
-```
-
-**Claude Desktop:** Add the server manually to `~/Library/Application Support/Claude/claude_desktop_config.json`. Replace the path with wherever you cloned this repo:
-
-```json
-{
-  "mcpServers": {
-    "personal-context": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--project", "/path/to/claude-plugins/chief-of-staff/servers/personal-context",
-        "/path/to/claude-plugins/chief-of-staff/servers/personal-context/server.py"
-      ]
-    }
-  }
-}
-```
-
-Restart Claude Desktop after editing the config.
+- `secretary` — meeting prep, transcript processing, meeting memory
+- `project-manager` — project plans, health monitoring, project index
 
 ---
 
@@ -146,7 +144,7 @@ The chief of staff assumes a particular structure to the Obsidian vault based on
 
 ### CLAUDE.md Configuration
 
-Add a **Chief of Staff** section to your vault's `CLAUDE.md` to set persistent path defaults — no arguments needed on every invocation. All path-aware skills read this block on startup.
+Add a **Chief of Staff** section to your vault's `CLAUDE.md` to set persistent path defaults — no arguments needed on every invocation. All path-aware skills (across CoS, secretary, and project-manager plugins) read this block on startup.
 
 ```markdown
 ## Chief of Staff
@@ -159,9 +157,9 @@ Add a **Chief of Staff** section to your vault's `CLAUDE.md` to set persistent p
 
 | Key | Default | Used by |
 |-----|---------|---------|
-| `projects-path` | `01-Projects` | `/new-project`, `/project-planner`, `/project-tracker`, `/project-index`, `/project-monitor`, `/meeting-prep` |
+| `projects-path` | `01-Projects` | project-manager: `/new-project`, `/project-planner`, `/project-tracker`, `/project-index`, `/project-monitor`; secretary: `/meeting-prep` |
 | `daily-notes-path` | `02-AreasOfResponsibility/Daily Notes` | `/start-day`, `/finish-day`, `/wrap-week` |
-| `notes-path` | `02-AreasOfResponsibility/Notes` | `/start-day`, `/finish-day`, `/meeting-prep`, `/process-transcripts`, `/project-monitor` |
+| `notes-path` | `02-AreasOfResponsibility/Notes` | `/start-day`, `/finish-day`; secretary: `/meeting-prep`, `/process-transcripts`; project-manager: `/project-monitor` |
 | `weekly-recaps-path` | `02-AreasOfResponsibility/Weekly Recaps` | `/start-week`, `/start-day`, `/wrap-week` |
 | `areas-path` | `02-AreasOfResponsibility` | `/wrap-week`, `/aor-review` |
 
@@ -174,7 +172,6 @@ Any skill argument takes highest precedence for that run:
 ```
 /start-day --daily-notes-path "Journal/Daily" --notes-path "Meetings"
 /wrap-week --weekly-recaps-path "Reviews/Weekly"
-/project-planner --projects-path "Projects"
 ```
 
 The skills assume this folder structure in your vault:
@@ -211,10 +208,10 @@ Enable the **Daily Notes** core plugin in Obsidian (Settings → Core Plugins �
 
 
 ### Notes
-The `Notes/` is where meeting notes are maintained. Files in this folder are never modified except to append new date sections for recurring meetings by `/finish-day`. No content is moved or duplicated.
+The `Notes/` folder is where meeting notes are maintained. Files in this folder are never modified except to append new date sections for recurring meetings by `/finish-day`. No content is moved or duplicated.
 
 ### Projects
-Every projects has its own folder with at least a `PLAN.md` file that contains the plan overview.  Notes specific to the project can be contained within a `Notes/` folder in the project.  Projects that are of interest but not being directly led by the user go into sub-folders within `Watched/`.  Projects are assumed to have a Todoist project named the same.  The `/new-project` skill will create a project folder, Todoist project and kick off the appropriate skill to generate the right PLAN.md file.
+Every project has its own folder with at least a `PLAN.md` file that contains the plan overview. Notes specific to the project can be contained within a `Notes/` folder in the project. Projects that are of interest but not being directly led by the user go into sub-folders within `Watched/`. Projects are assumed to have a Todoist project named the same. The `/project-manager:new-project` skill will create a project folder, Todoist project and kick off the appropriate skill to generate the right PLAN.md file.
 
 ---
 
@@ -232,18 +229,15 @@ If connected with an MCP server, processing can be automatically triggered by pa
 
 ## Skills Reference
 
-| Skill               | Description                                                                                                     | When to use                                            |
-| ------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `/start-week`       | Set 2–3 weekly priorities, review projects for deadlines, create weekly planning file                           | Monday morning                                         |
-| `/start-day`        | Morning briefing with priority emails, weekly priorities, calendar, tasks, and meeting notes                    | Each morning before starting work                      |
-| `/finish-day`       | Day close-out: priority email triage, brain dump, reschedule tasks, transcript reminder, prep tomorrow's notes  | Each evening before logging off                        |
-| `/wrap-week`        | Recap this week (1/3), plan next week with 2–3 priorities (2/3), creates next week's planning file              | Friday afternoon or Sunday evening                     |
-| `/aor-review`       | Review each Area of Responsibility — open task counts, age flags, suggest spinning up projects where warranted  | On demand, or automatically (silently) by /wrap-week   |
-| `/project-monitor`  | Compare active project plans against Todoist — surface stalls, task gaps, and approaching deadlines             | On demand, or automatically (silently) by /wrap-week   |
-| `/project-index`    | Fast lookup of all active projects — names, descriptions, areas, due dates from PLAN.md frontmatter             | On demand, or automatically by other skills            |
-| `/new-project`      | Create an Obsidian project folder and matching Todoist project, then hand off to planner or tracker             | Whenever you're starting a new project                 |
-| `/project-planner`  | Turn a new initiative into a structured, phased plan with objectives, tasks, and exit criteria                  | When starting or updating a project you own            |
-| `/project-tracker`  | Lightweight tracking doc for a project owned by someone on your team                                            | When you need to follow a report's project during 1:1s |
+These are the five skills that live in the chief-of-staff plugin. For meeting skills (`/meeting-prep`, `/process-transcripts`, `/ask-meetings`) see the `secretary` plugin. For project skills (`/project-planner`, `/project-monitor`, `/new-project`, etc.) see the `project-manager` plugin.
+
+| Skill          | Description                                                                                                    | When to use                                          |
+| -------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `/start-week`  | Set 2–3 weekly priorities, surface project deadlines via project-manager, create weekly planning file          | Monday morning                                       |
+| `/start-day`   | Morning briefing with priority emails, weekly priorities, calendar, tasks, and meeting notes                   | Each morning before starting work                    |
+| `/finish-day`  | Day close-out: email triage, brain dump, reschedule tasks, process today's transcripts, prep tomorrow's notes  | Each evening before logging off                      |
+| `/wrap-week`   | Recap this week (1/3), plan next week with 2–3 priorities (2/3), creates next week's planning file             | Friday afternoon or Sunday evening                   |
+| `/aor-review`  | Review each Area of Responsibility — open task counts, age flags, suggest spinning up projects where warranted | On demand, or automatically (silently) by /wrap-week |
 
 ### Arguments
 
@@ -269,33 +263,6 @@ If connected with an MCP server, processing can be automatically triggered by pa
 - `--areas-path <path>` — Override areas of responsibility root folder (default: `02-AreasOfResponsibility`)
 - `--summary` — Run in silent summary mode (no interaction, structured output only — used by `/wrap-week`)
 
-**`/project-monitor`**
-- `--projects-path <path>` — Override projects root folder (default: `01-Projects`)
-- `--summary` — Run in silent summary mode (no interaction, structured output only — used by `/wrap-week`)
-
-**`/meeting-prep`**
-- `--notes-path <path>` — Override meeting notes folder (default: `02-AreasOfResponsibility/Notes`)
-- `--projects-path <path>` — Override projects folder (default: `01-Projects`)
-
-**`/process-transcripts`**
-- `--notes-path <path>` — Override meeting notes folder (default: `02-AreasOfResponsibility/Notes`)
-- `--date <YYYY-MM-DD>` — Process transcripts for a specific date (default: today)
-- `--meeting <name>` — Process only a single named meeting
-- `--note-file <path>` — Explicit path to the Obsidian meeting note (bypasses auto-detection)
-- `--transcript-file <path>` — Explicit path to the transcript file (bypasses auto-detection)
-
-**`/project-index`**
-- `--projects-path <path>` — Override projects root folder (default: `01-Projects`)
-
-**`/new-project`**
-- `--projects-path <path>` — Override projects root folder. Precedence: this argument > `CLAUDE.md` config > default (`01-Projects`)
-
-**`/project-planner`**
-- `--projects-path <path>` — Override projects root folder (default: `01-Projects`)
-
-**`/project-tracker`**
-- `--projects-path <path>` — Override projects root folder (default: `01-Projects`)
-
 ---
 
 ## Tips
@@ -310,12 +277,8 @@ If connected with an MCP server, processing can be automatically triggered by pa
 
 **Weekly recap as a personal changelog.** ISO week filenames (`2026-W13.md`) sort naturally and are easy to review during quarterly or annual reflections.
 
-**Run `/finish-day` before leaving for the day** — not after. The meeting note prep for tomorrow works best when done while context is fresh.
+**Run `/finish-day` before leaving for the day** — not after. The meeting note prep for tomorrow works best when done while context is fresh. It also triggers transcript processing for today's meetings automatically.
 
-**Project descriptions are for machines.** The `description` field in each `PLAN.md` is read by the hook and injected as context into `/start-week` and other skills. Write it like a dense search snippet — system names, team names, the specific problem — so the index is useful for matching.
-
-**`/project-tracker` vs. `/project-planner`.** Tracker is for watching someone else's work (your reports, cross-functional partners). Planner is for structuring work you own. Don't use planner for observation — it'll create false accountability.
-
-**`/project-monitor` and `/aor-review` run inside `/wrap-week` automatically.** You don't need to run them separately on Fridays — wrap-week invokes both silently and uses their output to inform priority-setting. Run them independently mid-week when you want a focused check-in without going through the full wrap-week flow.
+**`/aor-review` runs inside `/wrap-week` automatically.** You don't need to run it separately on Fridays — wrap-week invokes it silently and uses its output to inform priority-setting. Run it independently mid-week when you want a focused check-in without going through the full wrap-week flow.
 
 **`/wrap-week` creates next week's file.** You'll start Monday with priorities and project context already written. `/start-week` is still useful if you want a more deliberate Monday planning session, but it's no longer required.

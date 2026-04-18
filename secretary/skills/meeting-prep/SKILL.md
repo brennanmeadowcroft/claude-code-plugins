@@ -111,7 +111,7 @@ If a PLAN.md path was given, read it. Pay attention to:
 - Unchecked tasks (pending work)
 - Phase structure and exit criteria (what's blocking progress)
 
-If it's a 1:1 meeting, use the /project-index skill to find projects of which the other participant is an owner or collaborator, then check those plans for relevant context.
+If it's a 1:1 meeting, use the /project-manager:project-index skill to find projects of which the other participant is an owner or collaborator, then check those plans for relevant context.
 
 ### Gmail
 

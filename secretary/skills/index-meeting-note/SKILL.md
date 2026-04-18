@@ -1,7 +1,7 @@
 ---
 name: index-meeting-note
 description: Index a processed meeting note into the ChromaDB meeting memory store. Typically called automatically by /process-transcripts (Phase 6), but can be called directly to re-index a note or backfill historical meetings. Must be run from the vault root.
-argument-hint: [optional] --reindex-file <vault-relative-path>
+argument-hint: "[optional] --reindex-file <vault-relative-path>"
 allowed-tools: Bash, Read, Glob
 ---
 

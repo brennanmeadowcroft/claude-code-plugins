@@ -145,7 +145,7 @@ Before priority-setting, invoke both sub-skills in summary mode. Do NOT prompt t
 
 Run in parallel:
 
-- **`/project-monitor --summary`** — returns a structured list of active projects with status, deadline, and flag notes
+- **`/project-manager:project-monitor --summary`** — returns a structured list of active projects with status, deadline, and flag notes
 - **`/aor-review --summary`** — returns a structured list of AORs with open task counts, oldest task age, and health flags
 
 Store both results internally for use in Phase 4. Do not display them to the user yet.

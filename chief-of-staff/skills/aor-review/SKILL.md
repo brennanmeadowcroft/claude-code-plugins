@@ -144,7 +144,7 @@ tags: [project]
 <!-- Filled in over time as the project progresses -->
 ```
 
-After creating the stub, tell the user: "Run `/project-planner` on this project to build out the full plan with phases, objectives, and exit criteria."
+After creating the stub, tell the user: "Run `/project-manager:project-planner` on this project to build out the full plan with phases, objectives, and exit criteria."
 
 ---
 
@@ -160,4 +160,4 @@ AOR review complete.
 - [Z] project(s) created: [names]
 ```
 
-If any projects were created, remind the user to run `/project-planner` to flesh them out.
+If any projects were created, remind the user to run `/project-manager:project-planner` to flesh them out.
